@@ -1,0 +1,48 @@
+
+
+
+<h1 ng-bind="project.name"> Project Title </h1>
+<hr>
+
+<div class="bg-info">
+  <p> Welcome! Add the following to header to your website! </p>
+  <pre>Content-Security-Policy: default-src 'self'; report-uri /endpoint/{{project.hash}}</pre>
+</div>
+
+
+<div class="row">
+  <!-- <div class="col-md-6">
+    <div ac-chart="blockedChartType" ac-data="blockedData" ac-config="blockedConfig" id='chart' class='chart'> </div>
+    <div ac-chart="documentChartType" ac-data="documentData" ac-config="documentConfig" id='chart' class='chart'> </div>
+  </div> -->
+
+  <div class="col-md-12">
+
+    <div id="chart_container">
+            <div id="y_axis"></div>
+            <div id="tschart"></div>
+    </div>
+    <div id="legend"></div>
+  </div>
+
+</div>
+
+
+<p> <strong> Total: </strong> {{entries.length}} </p>
+
+<table class="table">
+  <tr>
+    <th> Index </th>
+    <th> Date </th>
+    <th> Blocked URI </th>
+    <th> Document URI </th>
+  </tr>
+
+  <tr ng-repeat="entry in entries">
+    <td> {{$index + 1}} </td>
+    <td> {{entry.ts | date : 'medium'}} </td>
+    <td> {{entry.csp_report.blocked_uri}} </td>
+    <td> {{entry.csp_report.document_uri}} </td>
+  </tr>
+</table>
+

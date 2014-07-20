@@ -1,0 +1,17 @@
+{
+  "generator-angular-fullstack": {
+    "insertRoutes": true,
+    "registerRoutesFile": "server/routes.js",
+    "routesNeedle": "// Insert routes below",
+    "insertSockets": true,
+    "registerSocketsFile": "server/config/socketio.js",
+    "socketsNeedle": "// Insert sockets below",
+    "filters": {
+      "js": true,
+      "html": true,
+      "css": true,
+      "ngroute": true,
+      "mongoose": true
+    }
+  }
+}
