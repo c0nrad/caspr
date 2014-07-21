@@ -1,9 +1,43 @@
 body {
-  padding-top: 50px;
+  padding-top: 70px;
 }
-.starter-template {
-  padding: 40px 15px;
-  text-align: center;
+
+.intro {
+  font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif;
+  font-size: 20px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.introImage {
+  width: 200px;
+}
+
+.textBlock {
+  padding: 10px;
+}
+
+.worriesBlock {
+  padding: 15px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
+  font-size: 32px;
+}
+
+.sellBlock {
+  padding: 20px;
+}
+.sellBlockText {
+  padding: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  font-size: 36px;
+}
+
+.exampleLink {
+  text-align: right;
+  font-size: 14px;
 }
 
 .chart {
@@ -26,4 +60,14 @@ body {
 }
 #legend {
         margin: 0 0 0 10px;
+}
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
+.ng-cloak, .x-ng-cloak,
+.ng-hide {
+  display: none !important;
+}
+
+ng\:form {
+  display: block;
 }

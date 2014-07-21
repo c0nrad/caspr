@@ -47,10 +47,13 @@ app.controller('NewProjectController', function($scope, Project, $location) {
 
 app.controller('ProjectController', function($scope, Project, Entry, $routeParams) {
   $scope.project = Project.get({id: $routeParams.id}, function(project) {
-    $scope.entries = Entry.query({conditions: {'project': project._id}}, function(entries) {
-      buildBlockedChart(entries)
-      buildDocumentChart(entries)
+    Entry.query({conditions: {'project': project._id}}, function(entries) {
       buildTimeSeriesChart(entries)
+
+      for (var i = 0; i < entries.length; ++i) 
+        entries[i].selected = false; 
+
+      $scope.entries = entries;
     })
   });
 
@@ -104,68 +107,5 @@ app.controller('ProjectController', function($scope, Project, Entry, $routeParam
      
   }
 
-  $scope.blockedChartType = "pie"
-  function buildBlockedChart(entries) {
-    var blockedGroups = _.countBy(entries, function(entry) { 
-      if (entry.csp_report != undefined && entry.csp_report.blocked_uri != undefined) {
-        if (entry.csp_report.blocked_uri == "") 
-          return entry.csp_report.document_uri;
-        else 
-          return entry.csp_report.blocked_uri;
-      }
-      return "Not Specified"
-    }); 
 
-    var blockedGroupKeys = _.keys(blockedGroups);
-    var outData = []
-    for (var i = 0; i < blockedGroupKeys.length; ++i) {
-      var key = blockedGroupKeys[i];
-      var count = blockedGroups[key]
-      outData.push({x: key, y: [count]})
-    }
-
-    $scope.blockedData = {
-      series: _.keys(blockedGroups),
-      data : outData
-    }
-    $scope.blockedConfig = {
-      "labels": true,
-      "title": "Blocked URIs",
-      "legend": {
-        "display": true,
-        "position": "right"
-      }
-    }  
-  }
-
-  $scope.documentChartType = "pie"
-  function buildDocumentChart(entries) {
-    var documentGroups = _.countBy(entries, function(entry) { 
-      if (entry.csp_report != undefined && entry.csp_report.document_uri != undefined) {
-        return entry.csp_report.document_uri;
-      }
-      return "Not Specified";
-
-    });
-    var documentGroupKeys = _.keys(documentGroups);
-    var outData = []
-    for (var i = 0; i < documentGroupKeys.length; ++i) {
-      var key = documentGroupKeys[i];
-      var count = documentGroups[key]
-      outData.push({x: key, y: [count]})
-    }
-
-    $scope.documentData = {
-      series: _.keys(documentGroups),
-      data : outData
-    }
-    $scope.documentConfig = {
-      "labels": true,
-      "title": "Document URIs",
-      "legend": {
-        "display": true,
-        "position": "right"
-      }
-    }  
-  }
 });

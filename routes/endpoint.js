@@ -23,7 +23,7 @@ route.post('/:hash', function(req, res) {
       var e = new Entry({
         ip: req.ip,
         project: project._id,
-        raw: "SO MUCH. SO RAW",
+        raw: JSON.stringify(req.body),
         csp_report: req.body.csp_report
       })
 
