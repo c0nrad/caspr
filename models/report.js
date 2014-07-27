@@ -8,6 +8,7 @@ var ReportSchema = new Schema({
   ip: String,
   headers: String,
   raw: String,
+  directive: String,
 
   csp_report: {
     document_uri: String,

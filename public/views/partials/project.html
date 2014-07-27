@@ -92,6 +92,7 @@
   <tr>
     <th> Count </th>
     <th> Last Timestamp </th>
+    <th> Directive </th>
     <th> Document URI </th>
     <th> Blocked URI </th>
   </tr>
@@ -99,6 +100,7 @@
   <tr ng-repeat="group in groups | filter : search">
     <td> {{group.count}} </td>
     <td> {{group.latest | date: 'short'}} </td>
+    <td> {{group.directive}} </td>
     <td> {{group.csp_report.blocked_uri}} </td>
     <td> {{group.csp_report.document_uri}} </td>
   </tr>
