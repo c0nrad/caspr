@@ -6,7 +6,7 @@ var ProjectSchema = new Schema({
   hash: {type: String, default: "", unique: true},
   policy: {type: String, default: "", unique: true},
 });
-ProjectSchema.index({ hash: 1 }); // schema level
+ProjectSchema.index({ hash: 1 }); 
 
 ProjectSchema.pre('save', function(next) {
   if (!this.isNew) return next();
@@ -15,7 +15,6 @@ ProjectSchema.pre('save', function(next) {
   require('crypto').randomBytes(32, function(ex, buf) {
     var hash = buf.toString('hex');
     _this.hash = hash;
-    console.log('lol', hash);
     next()
   });
 })

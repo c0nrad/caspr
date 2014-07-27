@@ -18,6 +18,8 @@ var ReportSchema = new Schema({
     original_policy: String 
   },
 })
+ReportSchema.index({ project: 1 }); 
+
 
 var Report = mongoose.model('Report', ReportSchema);
 
