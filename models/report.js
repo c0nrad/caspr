@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var EntrySchema = new Schema({
+var ReportSchema = new Schema({
   project: {type: Schema.Types.ObjectId, ref: 'Project'},
   ts: {type: Date, default: Date.now},
 
@@ -18,6 +18,6 @@ var EntrySchema = new Schema({
   },
 })
 
-var Entry = mongoose.model('Entry', EntrySchema);
+var Report = mongoose.model('Report', ReportSchema);
 
-module.exports = Entry;
+module.exports = Report;

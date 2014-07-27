@@ -33,6 +33,7 @@ var CSPParser = function(req, res, next) {
             csp_report.blocked_uri = csp_report['blocked-uri'];
             csp_report.status_code = csp_report['status-code'];
             req.body.csp_report = csp_report;
+
             next();
         });
     } else {
@@ -51,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var allowCrossDomain = function(req, res, next) {
     //res.header('Content-Security-Policy', "default-src * 'unsafe-eval'; script-src 'self' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline' 'unsafe-eval'; report-uri /endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21")
-    res.header('Content-Security-Policy', "default-src 'self'; report-uri /endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21");
+    res.header('Content-Security-Policy-Report-Only', "default-src 'self'; report-uri /endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21");
     //res.header('Access-Control-Allow-Origin', config.allowedDomains);
     //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     //res.header('Access-Control-Allow-Headers', 'Content-Type');
