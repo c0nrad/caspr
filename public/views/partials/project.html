@@ -9,7 +9,7 @@
       </div>
       <div class="col-md-9"> 
         <p> Please add the following header to your website: </p>
-        <pre>Content-Security-Policy-Report-Only: default-src 'self'; report-uri {{host}}/endpoint/{{project.hash}}</pre>
+        <pre> default-src 'self'; connect-src 'self'; font-src 'self'; frame-src 'self'; img-src 'self'; media-src 'self'; object-src 'self'; script-src 'self'; style-src 'self'; report-uri http://{{host}}/endpoint/{{project.hash}} </pre>
       </div>
     </div>
   </div>

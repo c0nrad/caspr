@@ -17,6 +17,16 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
       templateUrl: 'views/partials/project.html', 
       controller: 'ProjectController'
     })
+
+    .when('/projects', {
+      templateUrl: 'views/partials/projects.html', 
+      controller: 'ProjectsController'
+    })
+
+    .when('/contact', {
+      templateUrl: "views/partials/contact.html", 
+      controller: 'ContactController'
+    })
 }]);
 
 //Resources
@@ -30,11 +40,15 @@ app.factory('Report', function($resource) {
 
 app.controller('HomeController', function() {});
 
-app.controller('NavController', function($location) {
+app.controller('NavController', function($location, $scope) {
   $scope.isActive = function (viewLocation) { 
     return viewLocation === $location.path();
   };
 }); 
+
+app.controller('ProjectsController', function(Project, $scope) {
+  $scope.projects = Project.query();
+});
 
 app.controller('NewProjectController', function($scope, Project, $location) {
   $scope.project = new Project({name: ""});
@@ -164,9 +178,9 @@ app.factory('Stats', function(Report) {
     return _.groupBy(reports, function(report) { 
       if (report.csp_report != undefined && report.csp_report.blocked_uri != undefined) {
         if (report.csp_report.blocked_uri == "") 
-          return report.csp_report.document_uri;
+          return report.directive + " - " + report.csp_report.document_uri;
         else 
-          return report.csp_report.blocked_uri;
+          return report.directive + " - " + report.csp_report.blocked_uri;
       }
     });
   }
