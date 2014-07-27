@@ -9,7 +9,7 @@
       </div>
       <div class="col-md-9"> 
         <p> Please add the following header to your website: </p>
-        <pre>Content-Security-Header: default-src 'none'; script-src 'self'; connect-src: 'self'; img-src: 'self'; style-src: 'self'; report-uri http://{{host}}/endpoint/{{project.hash}} </pre>
+        <pre>Content-Security-Header: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; report-uri http://{{host}}/endpoint/{{project.hash}} </pre>
       </div>
     </div>
   </div>
@@ -27,82 +27,78 @@
   </div>
 </div>
 
-<div class="dataView">
 
-  <div class="stats row">
-    <div class="col-md-3">
-      <div class="well"> 
-        <strong> Reports Today: </strong> 
-        <div class="statNumber"> {{reportsToday}} </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="well"> 
-        <strong> Total Reports: </strong> 
-        <div class="statNumber"> {{totalReports}} </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="well"> 
-        <strong> Unique Reports Today: </strong> 
-        <div class="statNumber"> {{uniqueReportsToday}} </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="well"> 
-        <strong> Total Unique Reports: </strong> 
-        <div class="statNumber"> {{totalUniqueReports}} </div>
-      </div>
+<div class="stats row">
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Reports Today: </strong> 
+      <div class="statNumber"> {{reportsToday}} </div>
     </div>
   </div>
 
-
-  <div class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for today! </div>
-  <div id="chartHolder">
-    <div id="chart_container">
-            <div id="y_axis"></div>
-            <div id="tschart"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-4">
-        <!-- <div id="graphControl">
-          <div class="form-group">
-            <label> Number of Series </label>
-            <input type="number" ng-model="seriesCount" class="form-control"> </input>
-          </div>
-        </div> -->
-      </div>
-
-      <div class="col-md-8">
-        <div id="legend"></div>
-      </div> 
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Total Reports: </strong> 
+      <div class="statNumber"> {{totalReports}} </div>
     </div>
   </div>
 
-  <input type="text" class="form-control" ng-model="search" placeholder="Search..."> </input>
-  <table class="table">
-    <tr>
-      <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
-      <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
-      <th ng-class="{ 'bg-primary': (predicate == 'directive') }" ng-click="tableSort('directive')"> Directive </th>
-      <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Document URI </th>
-      <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Blocked URI </th>
-    </tr>
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Unique Reports Today: </strong> 
+      <div class="statNumber"> {{uniqueReportsToday}} </div>
+    </div>
+  </div>
 
-    <tr ng-repeat="group in groups | filter : search | orderBy:predicate:tableReversed">
-      <td> {{group.count}} </td>
-      <td> {{group.latest | date: 'short'}} </td>
-      <td> {{group.directive}} </td>
-      <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
-      <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
-    </tr>
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Total Unique Reports: </strong> 
+      <div class="statNumber"> {{totalUniqueReports}} </div>
+    </div>
+  </div>
+</div>
 
-  </table>
+
+<div class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for today! </div>
+<div id="chartHolder">
+  <div id="chart_container">
+          <div id="y_axis"></div>
+          <div id="tschart"></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <!-- <div id="graphControl">
+        <div class="form-group">
+          <label> Number of Series </label>
+          <input type="number" ng-model="seriesCount" class="form-control"> </input>
+        </div>
+      </div> -->
+    </div>
+
+    <div class="col-md-8">
+      <div id="legend"></div>
+    </div> 
+  </div>
 </div>
-<div class="noData" ng-hide="reports">
-  <div class="alert alert-warning" role="alert"> <strong> Warning! </strong> No reports have been received.</div>
-</div>
+
+<input type="text" class="form-control" ng-model="search" placeholder="Search..."> </input>
+<table class="table">
+  <tr>
+    <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'directive') }" ng-click="tableSort('directive')"> Directive </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Document URI </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Blocked URI </th>
+  </tr>
+
+  <tr ng-repeat="group in groups | filter : search | orderBy:predicate:tableReversed">
+    <td> {{group.count}} </td>
+    <td> {{group.latest | date: 'short'}} </td>
+    <td> {{group.directive}} </td>
+    <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
+    <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
+  </tr>
+
+</table>
+
