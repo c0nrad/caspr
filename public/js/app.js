@@ -64,25 +64,37 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
   $scope.host = window.location.host
   $scope.project = Project.get({id: $routeParams.id}, function(project) {
     Report.query({conditions: {'project': project._id}}, function(reports) {
+      $scope.reports = reports;
 
       $scope.reportsToday = Stats.todayReportCount(reports);
       $scope.totalReports = Stats.totalReportCount(reports);
       $scope.uniqueReportsToday = Stats.todayUniqueReports(reports);
       $scope.totalUniqueReports = Stats.totalUniqueReports(reports);
 
-      //console.log("HERE BITHCES", Stats.getTodaySeriesByHourGroups(reports, 3))
-
       buildTimeSeriesChart(reports, $scope.seriesCount)
-
 
       $scope.groups = Stats.getSortedTableGroups(reports);
 
-      for (var i = 0; i < reports.length; ++i) 
-        reports[i].selected = false; 
-
-      $scope.reports = reports;
     })
   });
+
+  $scope.predicate = "latest";
+  $scope.tableReversed = true;
+  $scope.tableSort = function(predicate) {
+    if ($scope.predicate == predicate) {
+      $scope.tableReversed = ! $scope.tableReversed;
+      return;
+    }
+
+    $scope.predicate = predicate
+  }
+
+  $scope.urlDisplay = function(line) {
+    if (line.length < 50)
+      return line; 
+
+    return line.substring(0, 47) + "...";
+  }
 
   function buildTimeSeriesChart(reports, seriesCount) {
      
@@ -90,7 +102,7 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
     var palette = new Rickshaw.Color.Palette();
     var groups = Stats.getTodaySeriesByHourGroups(reports, 3);
 
-    // Assign Colors
+        // Assign Colors
     var series = _.map(groups, function(data, name) {
       return {
         name: name,
@@ -98,6 +110,10 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
         color: palette.color()
       }
     })
+
+    if (series.length == 0) {
+      series= [{name: "Empty", data: Stats.emptyTodayBuckets(), color: palette.color()}]
+    }
 
     // Start Real Graphing
     var graph = new Rickshaw.Graph( {
@@ -193,7 +209,7 @@ app.factory('Stats', function(Report) {
         var name = entry[0];
         var reports = entry[1];
         var out = reports[0];
-        out.latest = _.max(reports, function(r) { return new Date(r.ts); }).ts;
+        out.latest = new Date(_.max(reports, function(r) { return new Date(r.ts); }).ts);
         out.count = reports.length;
         out.name = name;
         return out;
@@ -207,6 +223,16 @@ app.factory('Stats', function(Report) {
     .sortBy(function(i) { return -i[1]; })
     .first(count)
     .value()
+  }
+
+  out.emptyTodayBuckets = function() {
+    var buckets = [];
+    for (var hour = 0; hour < 24; ++hour) {
+      var d = new Date();
+      d.setHours(hour, 0, 0, 0);
+      buckets[hour] = {x: d.getTime()/1000, y: 0};
+    }
+    return buckets;
   }
 
   out.getTodaySeriesByHourGroups = function(reports, totalGroups) {
@@ -234,7 +260,6 @@ app.factory('Stats', function(Report) {
 
       results[group] = buckets;
     }
-
     return results;
     // document_uri_1: [hour0, hour1, hour2, hour3...]
     // document_uri_2: [hour0, hour1, hour2, hour3...]
