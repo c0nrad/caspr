@@ -1,0 +1,18 @@
+{
+  "name": "caspr",
+  "version": "0.0.0",
+  "homepage": "https://github.com/c0nrad/caspr",
+  "authors": [
+    "Stuart Larsen <stuart.larsen@10gen.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/bower_components",
+    "test",
+    "tests"
+  ]
+}
