@@ -255,7 +255,7 @@ app.factory('Stats', function(Report) {
       .map(function(entry) {
         var name = entry[0];
         var reports = entry[1];
-        var out = reports[0];
+        var out = angular.copy(reports[0]);
         out.latest = new Date(_.max(reports, function(r) { return new Date(r.ts); }).ts);
         out.count = reports.length;
         out.name = name;
@@ -267,7 +267,9 @@ app.factory('Stats', function(Report) {
   out.topGroups = function(groups, count) {
     return _.chain(groups)
     .pairs()
-    .sortBy(function(i) { return -i[1]; })
+    .sortBy(function(i) { 
+      return -i[1].length;
+    })
     .first(count)
     .value()
   }
