@@ -59,7 +59,21 @@ body {
         width: 40px;
 }
 #legend {
-        margin: 0 0 0 10px;
+  float: right; 
+  margin: 20px 0px 20px 20px;
+}
+
+#graphControl {
+  magin: 20px 20px 20px 0px;
+}
+
+.statNumber {
+  font-size: 48px;
+  text-align: center;
+}
+
+.policy {
+  padding-bottom: 20px;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],

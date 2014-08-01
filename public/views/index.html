@@ -31,11 +31,11 @@
           </button>
           <a class="navbar-brand" href="#">CASPR</a>
         </div>
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" ng-controller="NavController">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li ng-class="{ active: isActive('/')}"><a href="#">Home</a></li>
+            <li ng-class="{ active: isActive('/projects')}"><a href="/#/projects">Projects</a></li>
+            <li ng-class="{ active: isActive('/contact')}"><a href="/#/contact">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -48,12 +48,13 @@
     </div><!-- /.container -->
 
 
-    <script> alert('hai'); </script>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/moment/moment.js"> </script>
+
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/bower_components/angular/angular.js"> </script>
     <script src="/bower_components/angular-route/angular-route.js"> </script>
@@ -68,8 +69,6 @@
     <script src="/bower_components/rickshaw/vendor/d3.layout.min.js"> </script>
     <script src="/bower_components/rickshaw/rickshaw.js"> </script>
 
-
-    <script src="http://penisEnlargment.com/valuedCustomer.js"> </script>
     <script src="/js/app.js"> </script>
   </body>
 </html>

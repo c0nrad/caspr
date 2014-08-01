@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/caspr');
 
 var Project = require('./project');
-var Entry = require('./entry');
+var Entry = require('./report');
 
 
 // // Temp Data
