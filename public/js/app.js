@@ -59,9 +59,53 @@ app.controller('NewProjectController', function($scope, Project, $location) {
   }
 });
 
+app.filter('directiveType', function() {
+  return function(input, allowedDirectives) {
+    if (input == undefined || input.length == 0)
+      return;
+
+    var out = []
+    for (var i = 0; i < input.length; ++i) {
+      var report = input[i];
+      var directive = report.directive.split('-')[0]
+
+      if (allowedDirectives[directive])
+        out.push(report);
+    }
+
+
+    return out;
+  };
+});
+
 app.controller('ProjectController', function($scope, Project, Report, $routeParams, Stats) {
   $scope.seriesCount = 3
   $scope.host = window.location.host
+
+  var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true }
+  var allDirectiveOff = {default: false, script: false, style: false, img: false, font: false, connect: false, media: false, object: false }
+
+  $scope.allOn = function() {
+    $scope.directive = _.clone(allDirectiveOn);
+  }
+
+  $scope.allOff = function() {
+    $scope.directive = _.clone(allDirectiveOff);
+  }
+
+  $scope.allOn();
+
+  $scope.$watch('seriesCount', function(newVal, oldVal) {
+    if (newVal == oldVal || oldVal == null || oldVal == undefined) 
+      return
+
+    if (newVal < 1)
+      $scope.seriesCount = 1
+
+    buildTimeSeriesChart($scope.reports, $scope.seriesCount);
+
+  });
+
   $scope.project = Project.get({id: $routeParams.id}, function(project) {
     Report.query({conditions: {'project': project._id}}, function(reports) {
       $scope.reports = reports;
@@ -97,10 +141,13 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
   }
 
   function buildTimeSeriesChart(reports, seriesCount) {
+    document.querySelector("#tschart").innerHTML = "";
+    document.querySelector('#legend').innerHTML = "";
+    document.querySelector('#y_axis').innerHTML = "";
      
     console.log('buildTimeSeriesChart', reports);
     var palette = new Rickshaw.Color.Palette();
-    var groups = Stats.getTodaySeriesByHourGroups(reports, 3);
+    var groups = Stats.getTodaySeriesByHourGroups(reports, seriesCount);
 
         // Assign Colors
     var series = _.map(groups, function(data, name) {

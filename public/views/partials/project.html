@@ -63,27 +63,68 @@
 
 <div id="chartHolder">
   <div id="chart_container">
-          <div id="y_axis"></div>
-          <div id="tschart"></div>
+    <div id="y_axis"></div>
+    <div id="tschart"></div>
   </div>
 
   <div class="row">
+
     <div class="col-md-4">
-      <!-- <div id="graphControl">
-        <div class="form-group">
-          <label> Number of Series </label>
-          <input type="number" ng-model="seriesCount" class="form-control"> </input>
-        </div>
-      </div> -->
     </div>
 
-    <div class="col-md-8">
-      <div id="legend"></div>
+    <div class="col-md-4">
+      <div id="seriesCount"  style="padding: 20px">
+        <label> Number of Series: </label>
+        <div class="input-group">
+          <span class="input-group-addon" ng-click="seriesCount = seriesCount - 1">-</span>
+          <input type="text" class="form-control" ng-model="seriesCount">
+          <span class="input-group-addon" ng-click="seriesCount = seriesCount + 1">+</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-4">
+      <div style="width: 95%" id="legend"></div>
     </div> 
   </div>
 </div>
 
+<br>
+
 <input type="text" class="form-control" ng-model="search" placeholder="Search..."> </input>
+
+<div class="directiveFilter" style="padding: 10px">
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox1" ng-model="directive.default"> default-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox2" ng-model="directive.script"> script-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.style"> style-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox1" ng-model="directive.img"> img-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox2" ng-model="directive.font"> font-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.connect"> connect-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.media"> media-src
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.object"> object-src
+  </label>
+
+  <button class="button-inline btn btn-primary" ng-click="allOn()"> All On </button>
+  <button class="button-inline btn btn-danger" ng-click="allOff()"> All Off </button>
+</div>
+
+<div style="height: 500px">
 <table class="table">
   <tr>
     <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
@@ -93,13 +134,15 @@
     <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
   </tr>
 
-  <tr ng-repeat="group in groups | filter : search | orderBy:predicate:tableReversed">
+  <tr ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed">
     <td> {{group.count}} </td>
     <td> {{group.latest | date: 'short'}} </td>
     <td> {{group.directive}} </td>
     <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
     <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
   </tr>
-
 </table>
+</div>
 
+<!-- <div ng-show="(groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed).length == 0" style="height: 400px">  </div>
+ -->

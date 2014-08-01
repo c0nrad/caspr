@@ -53,14 +53,13 @@ body {
         margin-left: 40px;
 }
 #y_axis {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 40px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
 }
 #legend {
-  float: right; 
-  margin: 20px 0px 20px 20px;
+  margin: 20px 20px 0px 20px;
 }
 
 #graphControl {
