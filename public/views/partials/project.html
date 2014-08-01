@@ -89,8 +89,8 @@
     <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
     <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
     <th ng-class="{ 'bg-primary': (predicate == 'directive') }" ng-click="tableSort('directive')"> Directive </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Document URI </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Blocked URI </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Blocked URI </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
   </tr>
 
   <tr ng-repeat="group in groups | filter : search | orderBy:predicate:tableReversed">
