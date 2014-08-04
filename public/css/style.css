@@ -1,5 +1,10 @@
 body {
-  padding-top: 70px;
+  padding-top: 50px;
+}
+
+.title {
+  font-family: 'Unkempt', cursive;
+  color: #428bca;
 }
 
 .intro {
@@ -7,6 +12,11 @@ body {
   font-size: 20px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+.block {
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .introImage {
