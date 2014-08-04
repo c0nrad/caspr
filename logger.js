@@ -5,7 +5,10 @@ logger.addColors({debug: 'green',info:  'cyan',silly: 'magenta',warn:  'yellow',
 
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: 'debug', colorize:true, timestamp : true });
+logger.add(logger.transports.File, { level: "debug", timestamp: true, filename: "log.log", json: true})
 
-//logger.handleExceptions(new logger.transports.File({ filename: './exceptions.log' }))
+logger.handleExceptions(new logger.transports.File({ filename: './exceptions.log' }))
+logger.handleExceptions(new logger.transports.Console({ level: 'debug', colorize:true, timestamp : true }))
+
 
 module.exports = logger
