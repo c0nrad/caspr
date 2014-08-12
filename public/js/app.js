@@ -104,7 +104,6 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
     $scope.range = period;
     $scope.endDate = new Date().getTime();
     $scope.startDate = moment().subtract(period, 1).toDate().getTime();
-    console.log($scope.startDate, $scope.endDate);
     loadGroups();
   }
 
@@ -159,7 +158,6 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
 
   function loadGroups() {
     var directives = _.chain($scope.directive).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
-    console.log(directives);
     Group.get({id: $routeParams.id, startDate: $scope.startDate, endDate: $scope.endDate, bucket: $scope.bucket, limit: $scope.limit, directives: directives}, function(results) {
       $scope.groups = results.groups;
       $scope.stats.reportCount = results.reportCount;
@@ -226,7 +224,9 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
     //}
 
     var series = _.chain(groups).first(seriesCount).map(function(group) {
-      console.log(group.data);
+      // group.data.unshift({x: $scope.startDate/1000-10 , y:0})
+      // group.data.push({x: $scope.endDate/1000+10, y:0})
+      console.log(group.name, group.data);
       return {
         name: group.name,
         data: group.data,

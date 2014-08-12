@@ -104,8 +104,9 @@ ProjectController.get('/:hash/groups', function(req, res) {
       var groups = results.groupBuckets;
 
       for (var i = 0; i < groups.length; ++i) {
-        groups[i].data = buckets(bucket, groups[i].data);
+        groups[i].data = buckets(bucket, startDate, endDate, groups[i].data);
       }
+
       return next(null, groups);
     }]
 
@@ -158,8 +159,10 @@ ProjectController.get('/:hash/stats', function(req, res) {
 router.use('/', baucis());
 module.exports = router;
 
-function buckets(bucketSize, data) {
+function buckets(bucketSize, startDate, endDate, data) {
   var hist = {};
+  hist[startDate/1000] = 0;
+  hist[endDate/1000] = 0;
   for (var i = 0 ; i < data.length; ++i) {
 
     var reportDate = data[i].getTime()/1000;
@@ -176,6 +179,9 @@ function buckets(bucketSize, data) {
     var key = keys[i];
     out.push({x: Number(key), y: hist[key] });
   }
+
+  out = _.sortBy(out, function(a) {return a.x})
+
   return out;
 }
 

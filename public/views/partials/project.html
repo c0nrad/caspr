@@ -147,6 +147,7 @@
 
 <br>
 
+
 <div style="height: 500px">
 <table class="table">
   <tr>
@@ -157,12 +158,13 @@
     <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
   </tr>
 
-  <tr ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed">
+  <tr ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed" ng-click="group.selected=!group.selected">
     <td> {{group.count}} </td>
     <td> {{group.latest | date: 'short'}} </td>
     <td> {{group.directive}} </td>
     <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
     <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
+    <td ng-show="group.selected"> {{group.csp_report}} </td>
   </tr>
 </table>
 </div>
