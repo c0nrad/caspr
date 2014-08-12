@@ -4,11 +4,10 @@ var favicon = require('static-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var winston = require('./logger');
 
 // load models
 require('./models/index')
-
 
 var app = express();
 
@@ -54,9 +53,9 @@ var allowCrossDomain = function(req, res, next) {
     //res.header('Access-Control-Allow-Origin', config.allowedDomains);
     //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     //res.header('Access-Control-Allow-Headers', 'Content-Type');
-      res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-      res.header('Pragma', 'no-cache');
-      res.header('Expires', 0);
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.header('Pragma', 'no-cache');
+    res.header('Expires', 0);
     
     next();
 }
@@ -87,7 +86,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
-        console.log(err.message);
+        winston.warn(err.message);
         res.status(err.status || 500);
         res.render('error', {
             message: err.message,
@@ -99,7 +98,7 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    console.log(err.message);
+    winston.warn(err.message);
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,

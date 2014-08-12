@@ -18,6 +18,7 @@
     "ejs": "*",
     "async": "*",
     "connect": "*",
-    "moment": "*"
+    "moment": "*",
+    "winston": "*"
   }
 }

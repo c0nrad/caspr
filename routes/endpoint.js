@@ -3,13 +3,13 @@ var route = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
+var winston = require('../logger');
+
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
 
 route.post('/:hash', function(req, res) {
   var hash = req.params.hash;
-
-  console.log("Body", req.body);
 
   async.auto({
     project: function(next) {
@@ -35,19 +35,17 @@ route.post('/:hash', function(req, res) {
     updatePolicy: ['project', 'report', function(next, results) {
       var project = results.project;
       var report = results.report[0];
-      console.log(report);
       project.policy = report.csp_report.original_policy;
       project.save(next);
     }]
 
   }, function(err, results) {
     if (err) {
-      console.log("ERROR - ", err);
+      winston.warn("ERROR - ", err);
       res.send(err, 400);
       return
     }
 
-    console.log(results);
     res.send('Okay');
   })
 })

@@ -4,6 +4,7 @@ var app = require('../app');
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+var logger = require('../logger');
 
 app.set('port', process.env.PORT || 3000);
 app.set('ssl', process.env.SSL || false);
@@ -21,5 +22,5 @@ if (app.get('ssl')) {
 }
 
 var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
+  logger.info('Express server listening on port ' + server.address().port);
 });

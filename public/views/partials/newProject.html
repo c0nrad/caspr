@@ -1,20 +1,24 @@
-<h1 ng-bind="project.name"> </h1>
-<hr>
 
-<div class="row">
-  <div class="col-md-6">
-    <div class="form-group">
-      <label> Website </label>
-      <input type="text" ng-model="project.name" class="form-control"> </input> 
+<div class="container">
+
+  <h1 ng-bind="project.name"> </h1>
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label> Website </label>
+        <input type="text" ng-model="project.name" class="form-control"> </input> 
+      </div>
+
+      <button ng-disabled="project.name == ''" class="btn btn-info pull-right btn-lg btn-block" ng-click="save()"> Done! </button>
     </div>
 
-    <button ng-disabled="project.name == ''" class="btn btn-info pull-right btn-lg btn-block" ng-click="save()"> Done! </button>
-  </div>
+    <div class="col-md-6 well">
+      <p> I don't believe in making users register accounts. But Caspr still needs a way to recognize you! What's your website or project called? </p>
 
-  <div class="col-md-6 well">
-    <p> I don't believe in making users register accounts. But Caspr still needs a way to recognize you! What's your website or project called? </p>
+      <p> After this we start generating your policy! </p>
 
-    <p> After this we start generating your policy! </p>
-
-  </div>
-</div> 
+    </div>
+  </div> 
+</div>
