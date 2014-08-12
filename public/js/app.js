@@ -31,11 +31,19 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 
 //Resources
 app.factory('Project', function($resource) {
-  return $resource('/api/projects/:id', {id: '@id'}, {update: {method: 'PUT'}});
+  return $resource('/api/projects/:id', {id: '@id'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:id/groups', isArray: true}});
 });
 
 app.factory('Report', function($resource) {
   return $resource('/api/reports/:id', {id: '@id'}, {update: {method: 'PUT'}})
+});
+
+app.factory('Group', function($resource) {
+  return $resource('/api/projects/:id/groups', {id: '@id'}, {});
+})
+
+app.factory('Stats', function($resource) {
+  return $resource('/api/projects/:id/stats', {id: '@id'}, {});
 })
 
 app.controller('HomeController', function() {});
@@ -78,102 +86,169 @@ app.filter('directiveType', function() {
   };
 });
 
-app.controller('ProjectController', function($scope, Project, Report, $routeParams, Stats) {
-  $scope.seriesCount = 3
-  $scope.host = window.location.host
+app.controller('ProjectController', function($scope, Project, Report, Group, $routeParams, Stats) {
+  $scope.seriesCount = 3;
+  $scope.host = window.location.host;
+  $scope.range = "";
 
-  var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true }
-  var allDirectiveOff = {default: false, script: false, style: false, img: false, font: false, connect: false, media: false, object: false }
+  $scope.startDate = new Date();
+  $scope.endDate = new Date();
+  $scope.bucketSize = "hour";
+  $scope.bucket = 60 * 60; // hour in seconds
+  $scope.limit = 100;
+
+  var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true };
+  var allDirectiveOff = {default: false, script: false, style: false, img: false, font: false, connect: false, media: false, object: false };
+
+  $scope.setRange = function(period) {
+    $scope.range = period;
+    $scope.endDate = new Date().getTime();
+    $scope.startDate = moment().subtract(period, 1).toDate().getTime();
+    console.log($scope.startDate, $scope.endDate);
+    loadGroups();
+  }
+
+  $scope.setBucket = function(bucketString) {
+    console.log(bucketString, "HERE");
+    if (bucketString === "second") {
+      $scope.bucket = 1;
+    } else if (bucketString === "minute") {
+      $scope.bucket = 60;
+    } else if (bucketString === "hour") {
+      $scope.bucket = 60 * 60;
+    } else if (bucketString === "day") {
+      $scope.bucket = 60 * 60 * 24;
+    }
+
+    $scope.bucketSize = bucketString;
+    console.log($scope.bucketSize, $scope.bucket);
+    loadGroups();
+  }
 
   $scope.allOn = function() {
     $scope.directive = _.clone(allDirectiveOn);
-  }
+  };
 
   $scope.allOff = function() {
     $scope.directive = _.clone(allDirectiveOff);
-  }
+  };
 
   $scope.allOn();
 
+  $scope.$watch('directive', function(newVal, oldVal) {
+    loadGroups();
+  }, true)
+
+  $scope.$watch('limit', function(newVal, oldVal) {
+    loadGroups();
+  })
+
   $scope.$watch('seriesCount', function(newVal, oldVal) {
-    if (newVal == oldVal || oldVal == null || oldVal == undefined) 
-      return
+    if (newVal === oldVal || oldVal === null || oldVal === undefined) {
+      return;
+    }
 
-    if (newVal < 1)
-      $scope.seriesCount = 1
+    if (newVal < 1) {
+      $scope.seriesCount = 1;
+    }
 
-    buildTimeSeriesChart($scope.reports, $scope.seriesCount);
-
+    buildTimeSeriesChart($scope.groups, $scope.seriesCount);
   });
 
-  $scope.project = Project.get({id: $routeParams.id}, function(project) {
-    Report.query({conditions: {'project': project._id}}, function(reports) {
-      $scope.reports = reports;
+  $scope.project = Project.get({id: $routeParams.id})
 
-      $scope.reportsToday = Stats.todayReportCount(reports);
-      $scope.totalReports = Stats.totalReportCount(reports);
-      $scope.uniqueReportsToday = Stats.todayUniqueReports(reports);
-      $scope.totalUniqueReports = Stats.totalUniqueReports(reports);
+  function loadGroups() {
+    var directives = _.chain($scope.directive).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
+    console.log(directives);
+    Group.get({id: $routeParams.id, startDate: $scope.startDate, endDate: $scope.endDate, bucket: $scope.bucket, limit: $scope.limit, directives: directives}, function(results) {
+      $scope.groups = results.groups;
+      $scope.stats.reportCount = results.reportCount;
+      $scope.stats.groupCount = results.groupCount;
+      buildTimeSeriesChart(results.groups, $scope.seriesCount);
+    });
+  }
+  $scope.setRange('month');
 
-      buildTimeSeriesChart(reports, $scope.seriesCount)
+  $scope.stats = Stats.get({id: $routeParams.id});
 
-      $scope.groups = Stats.getSortedTableGroups(reports);
-
-    })
-  });
-
-  $scope.predicate = "latest";
+  $scope.predicate = 'count';
   $scope.tableReversed = true;
   $scope.tableSort = function(predicate) {
-    if ($scope.predicate == predicate) {
+    if ($scope.predicate === predicate) {
       $scope.tableReversed = ! $scope.tableReversed;
       return;
     }
 
-    $scope.predicate = predicate
-  }
+    $scope.predicate = predicate;
+  };
 
   $scope.urlDisplay = function(line) {
-    if (line.length < 50)
-      return line; 
-
-    return line.substring(0, 47) + "...";
-  }
-
-  function buildTimeSeriesChart(reports, seriesCount) {
-    document.querySelector("#tschart").innerHTML = "";
-    document.querySelector('#legend').innerHTML = "";
-    document.querySelector('#y_axis').innerHTML = "";
-     
-    console.log('buildTimeSeriesChart', reports);
-    var palette = new Rickshaw.Color.Palette();
-    var groups = Stats.getTodaySeriesByHourGroups(reports, seriesCount);
-
-        // Assign Colors
-    var series = _.map(groups, function(data, name) {
-      return {
-        name: name,
-        data: data,
-        color: palette.color()
-      }
-    })
-
-    if (series.length == 0) {
-      series= [{name: "Empty", data: Stats.emptyTodayBuckets(), color: palette.color()}]
+    if (line.length < 50) {
+      return line;
     }
+
+    return line.substring(0, 47) + '...';
+  };
+
+
+  function buildTimeSeriesChart(groups, seriesCount) {
+    document.querySelector('#tschart').innerHTML = '';
+    document.querySelector('#legend').innerHTML = '';
+    document.querySelector('#y_axis').innerHTML = '';
+
+    if (groups.length == 0)
+      return;
+     
+    var palette = new Rickshaw.Color.Palette();
+    //var groups = Stats.getTodaySeriesByHourGroups(reports, seriesCount);
+
+    // Series should be at least a day long...
+    // var minDate = groups[0].data[0].x
+    // var maxDate = groups[0].data[0].x // number of seconds in a day;
+    // for (var i = 0; i < groups.lenght; ++i) {
+    //   if (groups[i].data[0] < minDate) {
+    //     minDate = groups[i].data[0];
+    //   }
+
+    //   if (groups[i].data[groups.length - 1] > maxDate) {
+    //     maxDate = groups[i].data[groups.length - 1];
+    //   }
+    // }
+
+    // if (maxDate - minDate < 86400) {
+    //   maxDate = minDate + 86400;
+    // }
+
+    // rangeData = groups[0].data;
+    // out = []
+    // for (var i = minDate; i <= maxDate; i += 60 * 60) {
+    //   var i = 0;
+    //}
+
+    var series = _.chain(groups).first(seriesCount).map(function(group) {
+      console.log(group.data);
+      return {
+        name: group.name,
+        data: group.data,
+        color: palette.color()
+      };
+    }).value();
+
+    Rickshaw.Series.zeroFill(series);
 
     // Start Real Graphing
     var graph = new Rickshaw.Graph( {
       height: 540,
-      element: document.querySelector("#tschart"),
+      element: document.querySelector('#tschart'),
       renderer: 'bar',
       series: series
     });
-     
-    var x_axis = new Rickshaw.Graph.Axis.Time( { 
+    
+    var x_axis = new Rickshaw.Graph.Axis.Time({
       graph: graph,
+      timeFixture: new Rickshaw.Fixtures.Time.Local()
     });
-  
+    
     var y_axis = new Rickshaw.Graph.Axis.Y( {
       graph: graph,
       orientation: 'left',
@@ -185,7 +260,6 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
       element: document.querySelector('#legend'),
       graph: graph
     });
-
 
     var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
       graph: graph,
@@ -199,129 +273,4 @@ app.controller('ProjectController', function($scope, Project, Report, $routePara
 
     graph.render();
   }
-});
-
-app.factory('Stats', function(Report) {
-  out = {}
-
-  out.todayReports = function(reports) {
-    var start = new Date();
-    start.setHours(0,0,0,0);
-
-    var out = [];
-
-    for (var i = 0; i < reports.length; ++i) {
-      if (new Date(reports[i].ts) > start) {
-        out.push(reports[i]);
-      }
-    }
-    return out;
-  }
-
-  out.todayReportCount = function(reports) {
-    var start = new Date();
-    start.setHours(0,0,0,0);
-
-    var count = 0;
-
-    for (var i = 0; i < reports.length; ++i) {
-      if (new Date(reports[i].ts) > start) {
-        count += 1;
-      }
-    }
-
-    return count;
-  }
-
-  out.totalReportCount = function(reports) {
-    return reports.length;
-  }
-
-  out.getGroups = function(reports) {
-    return _.groupBy(reports, function(report) { 
-      if (report.csp_report != undefined && report.csp_report.blocked_uri != undefined) {
-        if (report.csp_report.blocked_uri == "") 
-          return report.directive + " - " + report.csp_report.document_uri;
-        else 
-          return report.directive + " - " + report.csp_report.blocked_uri;
-      }
-    });
-  }
-
-  out.getSortedTableGroups = function(reports) {
-    return _.chain(out.getGroups(reports))
-      .pairs()
-      .sortBy(function(i) { return -i[1]; })
-      .map(function(entry) {
-        var name = entry[0];
-        var reports = entry[1];
-        var out = angular.copy(reports[0]);
-        out.latest = new Date(_.max(reports, function(r) { return new Date(r.ts); }).ts);
-        out.count = reports.length;
-        out.name = name;
-        return out;
-      })
-      .value();
-  }
-
-  out.topGroups = function(groups, count) {
-    return _.chain(groups)
-    .pairs()
-    .sortBy(function(i) { 
-      return -i[1].length;
-    })
-    .first(count)
-    .value()
-  }
-
-  out.emptyTodayBuckets = function() {
-    var buckets = [];
-    for (var hour = 0; hour < 24; ++hour) {
-      var d = new Date();
-      d.setHours(hour, 0, 0, 0);
-      buckets[hour] = {x: d.getTime()/1000, y: 0};
-    }
-    return buckets;
-  }
-
-  out.getTodaySeriesByHourGroups = function(reports, totalGroups) {
-    var todayReports = out.todayReports(reports);
-    var groups = out.getGroups(todayReports);
-    var topGroups = out.topGroups(groups, totalGroups);
-
-    var results = {}
-    for (var groupIndex = 0; groupIndex < topGroups.length; ++groupIndex) {
-      var group = topGroups[groupIndex][0];
-      var reports = topGroups[groupIndex][1];
-    
-      var buckets = [];
-      for (var hour = 0; hour < 24; ++hour) {
-        var d = new Date();
-        d.setHours(hour, 0, 0, 0);
-        buckets[hour] = {x: d.getTime()/1000, y: 0};
-      }
-
-      for (var reportIndex = 0; reportIndex < reports.length; ++reportIndex) {
-        var report = reports[reportIndex];
-        var reportDate = new Date(report.ts);
-        buckets[reportDate.getHours()].y += 1;
-      }
-
-      results[group] = buckets;
-    }
-    return results;
-    // document_uri_1: [hour0, hour1, hour2, hour3...]
-    // document_uri_2: [hour0, hour1, hour2, hour3...]
-  }
-
-  out.todayUniqueReports = function(reports) {
-    var todayReports = out.todayReports(reports);
-    return _.size(out.getGroups(todayReports));
-  }
-
-  out.totalUniqueReports = function(reports) {
-    return _.size(out.getGroups(reports));
-  }
-
-  return out;
 });

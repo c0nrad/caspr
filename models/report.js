@@ -18,7 +18,12 @@ var ReportSchema = new Schema({
     original_policy: String 
   },
 })
+
+// XXX: lrn2index
 ReportSchema.index({ project: 1 }); 
+ReportSchema.index({ csp_report: 1 }); 
+ReportSchema.index({ ts: 1 }); 
+ReportSchema.index({ directive: 1 }); 
 
 
 var Report = mongoose.model('Report', ReportSchema);

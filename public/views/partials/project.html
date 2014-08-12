@@ -2,7 +2,7 @@
 <hr>
 
 <div class="policy">
-  <div ng-hide="reports">
+  <div ng-hide="project.policy">
     <div class="row">
       <div class="col-md-3">
         <img src="/img/happy.png" width="100%"> </img>
@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <div ng-show="reports">
+  <div ng-show="project.policy">
     <div class="row">
       <div class="col-md-3">
         <img src="/img/happy.png" width="100%"> </img>
@@ -27,102 +27,122 @@
   </div>
 </div>
 
-
-<div class="stats row">
-  <div class="col-md-3">
-    <div class="well"> 
-      <strong> Reports Today: </strong> 
-      <div class="statNumber"> {{reportsToday}} </div>
-    </div>
-  </div>
-
-  <div class="col-md-3">
-    <div class="well"> 
-      <strong> Total Reports: </strong> 
-      <div class="statNumber"> {{totalReports}} </div>
-    </div>
-  </div>
-
-  <div class="col-md-3">
-    <div class="well"> 
-      <strong> Unique Reports Today: </strong> 
-      <div class="statNumber"> {{uniqueReportsToday}} </div>
-    </div>
-  </div>
-
-  <div class="col-md-3">
-    <div class="well"> 
-      <strong> Total Unique Reports: </strong> 
-      <div class="statNumber"> {{totalUniqueReports}} </div>
-    </div>
-  </div>
-</div>
-
-
-<div ng-hide="reportsToday" class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for today! </div>
-
-<div id="chartHolder">
-  <div id="chart_container">
-    <div id="y_axis"></div>
-    <div id="tschart"></div>
-  </div>
+<div class="well control-panel">
 
   <div class="row">
-
     <div class="col-md-4">
+      <div class="form-group">
+        <label> Data Range: </label> <br>
+        <div class="btn-group">
+          <button type="button" ng-repeat="period in ['hour', 'day', 'week', 'month']" class="btn btn-default" ng-class="{active: range == period}" ng-click="setRange(period)"> {{period}} </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label> Bucket Size: </label> <br>
+          <div class="btn-group">
+            <button type="button" ng-repeat="b in ['minute', 'hour', 'day']" class="btn btn-default" ng-class="{active: bucketSize == b}" ng-click="setBucket(b)"> {{b}} </button>
+          </div>
+      </div>
     </div>
 
-    <div class="col-md-4">
-      <div id="seriesCount"  style="padding: 20px">
-        <label> Number of Series: </label>
+    <div class="col-md-8">
+      <div class="form-group">
+        <label> Number of Tabel Elements </label>  
+        <div class="input-group">  
+          <span class="input-group-addon" ng-click="limit = limit - 25">-</span>
+          <input type="text" class="form-control" ng-model="limit">
+          <span class="input-group-addon" ng-click="limit = limit + 25">+</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label> Number of Graph Series: </label>
         <div class="input-group">
           <span class="input-group-addon" ng-click="seriesCount = seriesCount - 1">-</span>
           <input type="text" class="form-control" ng-model="seriesCount">
           <span class="input-group-addon" ng-click="seriesCount = seriesCount + 1">+</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label> Allowed Directives: </label>
+    <div class="directiveFilter">
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox1" ng-model="directive.default"> default
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox2" ng-model="directive.script"> script
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.style"> style
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox1" ng-model="directive.img"> img
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox2" ng-model="directive.font"> font
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.connect"> connect
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.media"> media
+      </label>
+      <label class="checkbox-inline">
+        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.object"> object
+      </label>
+
+      <button class="button-inline btn btn-primary" ng-click="allOn()"> All On </button>
+      <button class="button-inline btn btn-danger" ng-click="allOff()"> All Off </button>
+    </div>
+  </div>
+</div>
+
+<div ng-hide="groups.length" class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for range! </div>
+
+<div class="row">
+  <div class="col-md-2">
+    <div class="stats">
+      <div class="well"> 
+        <strong> Reports: </strong> 
+        <div class="statNumber"> {{stats.reportCount}} </div>
+      </div>
+
+      <div class="well"> 
+        <strong> Total Reports: </strong> 
+        <div class="statNumber"> {{stats.totalReports}} </div>
+      </div>
+
+      <div class="well"> 
+        <strong> Unique Reports: </strong> 
+        <div class="statNumber"> {{stats.groupCount}} </div>
+      </div>
+
+      <div class="well"> 
+        <strong> Total Unique Reports: </strong> 
+        <div class="statNumber"> {{stats.uniqueReportsTotal}} </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-10">
+
+    <div id="chartHolder">
+      <div style="position: absolute; left: 50px" id="legend"></div>
+
+      <div id="chart_container">
+        <div id="y_axis"></div>
+        <div id="tschart"></div>
+      </div>
 
     </div>
-
-    <div class="col-md-4">
-      <div style="width: 95%" id="legend"></div>
-    </div> 
   </div>
 </div>
 
 <br>
-
-<input type="text" class="form-control" ng-model="search" placeholder="Search..."> </input>
-
-<div class="directiveFilter" style="padding: 10px">
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox1" ng-model="directive.default"> default-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox2" ng-model="directive.script"> script-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.style"> style-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox1" ng-model="directive.img"> img-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox2" ng-model="directive.font"> font-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.connect"> connect-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.media"> media-src
-  </label>
-  <label class="checkbox-inline">
-    <input type="checkbox" id="inlineCheckbox3" ng-model="directive.object"> object-src
-  </label>
-
-  <button class="button-inline btn btn-primary" ng-click="allOn()"> All On </button>
-  <button class="button-inline btn btn-danger" ng-click="allOff()"> All Off </button>
-</div>
 
 <div style="height: 500px">
 <table class="table">

@@ -17,6 +17,7 @@
     "baucis": "*",
     "ejs": "*",
     "async": "*",
-    "connect": "*"
+    "connect": "*",
+    "moment": "*"
   }
 }
