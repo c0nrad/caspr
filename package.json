@@ -23,6 +23,7 @@
     "connect": "*",
     "moment": "*",
     "winston": "*",
-    "underscore": "*"
+    "underscore": "*",
+    "bower": "*"
   }
 }
