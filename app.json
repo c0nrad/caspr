@@ -1,0 +1,9 @@
+{
+  "name": "Caspr",
+  "description": "Content security policy aggregator",
+  "repository": "https://github.com/c0nrad/caspr",
+  "keywords": ["node", "express", "static", "CSP"],
+  "addons": [
+    "mongolab:shared-single-small"
+  ]
+}
