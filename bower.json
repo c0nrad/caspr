@@ -2,17 +2,22 @@
   "name": "caspr",
   "version": "0.0.0",
   "homepage": "https://github.com/c0nrad/caspr",
+  "description": "Content Security Policy Aggregator",
+  "main": "app.js",
   "authors": [
-    "Stuart Larsen <stuart.larsen@10gen.com>"
+    "Stuart C. Larsen"
   ],
   "license": "MIT",
   "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "public/bower_components",
-    "test",
-    "tests"
-  ]
+  "dependencies": {
+    "angular-charts": "~0.2.4",
+    "angular-resource": "~1.2.22",
+    "angular": "~1.2.20",
+    "angular-route": "~1.2.22",
+    "angularjs": "*",
+    "bootstrap": "~3.2.0",
+    "moment": "~2.8.1",
+    "underscore": "~1.6.0",
+    "rickshaw": "~1.5.0"
+  }
 }
