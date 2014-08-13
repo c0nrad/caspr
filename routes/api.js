@@ -161,11 +161,11 @@ module.exports = router;
 
 function buckets(bucketSize, startDate, endDate, data) {
   var hist = {};
-  hist[startDate/1000] = 0;
-  hist[endDate/1000] = 0;
+  hist[Math.round(startDate/1000)] = 0;
+  hist[Math.round(startDate/1000)] = 0;
   for (var i = 0 ; i < data.length; ++i) {
 
-    var reportDate = data[i].getTime()/1000;
+    var reportDate = Math.round(data[i].getTime()/1000);
     reportDate -= (reportDate % bucketSize);
     if (hist[reportDate] === undefined) {
       hist[reportDate] = 0;

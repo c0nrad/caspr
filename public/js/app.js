@@ -165,7 +165,7 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
       buildTimeSeriesChart(results.groups, $scope.seriesCount);
     });
   }
-  $scope.setRange('month');
+  $scope.setRange('day');
 
   $scope.stats = Stats.get({id: $routeParams.id});
 
