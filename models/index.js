@@ -1,6 +1,4 @@
 var mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/caspr');
-
 var Project = require('./project');
 var Entry = require('./report');
 

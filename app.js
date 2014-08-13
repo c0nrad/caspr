@@ -5,6 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var winston = require('./logger');
+var mongoose = require('mongoose');
+
+var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/caspr';
+mongoose.connect(mongoUri);
+
 
 // load models
 require('./models/index')
