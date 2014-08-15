@@ -102,6 +102,7 @@
       <button class="button-inline btn btn-danger" ng-click="allOff()"> All Off </button>
     </div>
   </div>
+
 </div>
 
 <div ng-hide="groups.length" class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for range! </div>
@@ -147,9 +148,9 @@
 
 <br>
 
-
 <div style="height: 500px">
 <table class="table">
+
   <tr>
     <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
     <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
@@ -158,17 +159,21 @@
     <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
   </tr>
 
-  <tr ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed" ng-click="group.selected=!group.selected">
-    <td> {{group.count}} </td>
-    <td> {{group.latest | date: 'short'}} </td>
-    <td> {{group.directive}} </td>
-    <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
-    <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
-    <td ng-show="group.selected"> {{group.csp_report}} </td>
-  </tr>
+  <tbody ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed">
+    <tr ng-click="group.selected=!group.selected">
+      <td> {{group.count}} </td>
+      <td> {{group.latest | date: 'short'}} </td>
+      <td> {{group.directive}} </td>
+      <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
+      <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
+    </tr>
+    <tr ng-show="group.selected" colspan="5">
+
+      <td colspan="5"> <pre> {{ group.csp_report | stringify }} </pre> </td>
+
+    </tr>
+  </tbody>
 </table>
 </div>
 
-<!-- <div ng-show="(groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed).length == 0" style="height: 400px">  </div>
- -->
 </div>

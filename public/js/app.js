@@ -108,7 +108,6 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
   }
 
   $scope.setBucket = function(bucketString) {
-    console.log(bucketString, "HERE");
     if (bucketString === "second") {
       $scope.bucket = 1;
     } else if (bucketString === "minute") {
@@ -120,7 +119,6 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
     }
 
     $scope.bucketSize = bucketString;
-    console.log($scope.bucketSize, $scope.bucket);
     loadGroups();
   }
 
@@ -198,35 +196,8 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
       return;
      
     var palette = new Rickshaw.Color.Palette();
-    //var groups = Stats.getTodaySeriesByHourGroups(reports, seriesCount);
-
-    // Series should be at least a day long...
-    // var minDate = groups[0].data[0].x
-    // var maxDate = groups[0].data[0].x // number of seconds in a day;
-    // for (var i = 0; i < groups.lenght; ++i) {
-    //   if (groups[i].data[0] < minDate) {
-    //     minDate = groups[i].data[0];
-    //   }
-
-    //   if (groups[i].data[groups.length - 1] > maxDate) {
-    //     maxDate = groups[i].data[groups.length - 1];
-    //   }
-    // }
-
-    // if (maxDate - minDate < 86400) {
-    //   maxDate = minDate + 86400;
-    // }
-
-    // rangeData = groups[0].data;
-    // out = []
-    // for (var i = minDate; i <= maxDate; i += 60 * 60) {
-    //   var i = 0;
-    //}
 
     var series = _.chain(groups).first(seriesCount).map(function(group) {
-      // group.data.unshift({x: $scope.startDate/1000-10 , y:0})
-      // group.data.push({x: $scope.endDate/1000+10, y:0})
-      console.log(group.name, group.data);
       return {
         name: group.name,
         data: group.data,
@@ -273,4 +244,10 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
 
     graph.render();
   }
+});
+
+app.filter('stringify', function() {
+  return function(obj) {
+    return JSON.stringify(obj, null, 2);
+  };
 });
