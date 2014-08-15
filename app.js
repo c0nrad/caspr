@@ -6,10 +6,10 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var winston = require('./logger');
 var mongoose = require('mongoose');
+var _ = require('underscore');
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/caspr';
 mongoose.connect(mongoUri);
-
 
 // load models
 require('./models/index')
@@ -30,13 +30,19 @@ var CSPParser = function(req, res, next) {
         });
 
         req.on('end', function() {
+
+            out = {}
             csp_report = JSON.parse(data)['csp-report'];
-            csp_report.document_uri = csp_report['document-uri'];
-            csp_report.violated_directive = csp_report['violated-directive'];
-            csp_report.original_policy = csp_report['original-policy'];
-            csp_report.blocked_uri = csp_report['blocked-uri'];
-            csp_report.status_code = csp_report['status-code'];
-            req.body.csp_report = csp_report;
+
+            var keys = _.keys(csp_report);
+
+            for (var i = 0; i < keys.length; ++i) {
+                var key = keys[i];
+                out[key.replace('-', '_')] = csp_report[key];
+            }
+            
+            req.body.data = data;
+            req.body.csp_report = out;
 
             next();
         });
@@ -54,7 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var allowCrossDomain = function(req, res, next) {
     //res.header('Content-Security-Policy', "default-src * 'unsafe-eval'; script-src 'self' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline' 'unsafe-eval'; report-uri /endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21")
-    res.header('Content-Security-Policy-Report-Only', "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; report-uri http://caspr.io/endpoint/82e0bbfbc927c0b79bc151880245170fef98c1270ed2a106fd36a40774c0d6bd");
+    res.header('Content-Security-Policy-Report-Only', "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri http://localhost:3000/endpoint/eaeceaec5227f9cd1b23b37cc22b0cd7cfa32a1026245c07de19564688f504ba");
     //res.header('Access-Control-Allow-Origin', config.allowedDomains);
     //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     //res.header('Access-Control-Allow-Headers', 'Content-Type');

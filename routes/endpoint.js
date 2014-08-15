@@ -24,7 +24,7 @@ route.post('/:hash', function(req, res) {
       var e = new Report({
         ip: req.ip,
         project: project._id,
-        raw: JSON.stringify(req.body),
+        raw: req.body.data,
         csp_report: req.body.csp_report, 
         directive: req.body.csp_report.violated_directive.split(' ')[0]
       })

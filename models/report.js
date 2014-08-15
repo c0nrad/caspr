@@ -15,7 +15,11 @@ var ReportSchema = new Schema({
     referrer: String, 
     blocked_uri: String,
     violated_directive: String,
-    original_policy: String 
+    original_policy: String,
+    source_file: String,
+    line_number: Number,
+    column_number: Number,
+    status_code: Number
   },
 })
 
