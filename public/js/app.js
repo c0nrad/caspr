@@ -81,7 +81,6 @@ app.filter('directiveType', function() {
         out.push(report);
     }
 
-
     return out;
   };
 });
@@ -95,7 +94,7 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
   $scope.endDate = new Date();
   $scope.bucketSize = "hour";
   $scope.bucket = 60 * 60; // hour in seconds
-  $scope.limit = 100;
+  $scope.limit = 50;
 
   var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true };
   var allDirectiveOff = {default: false, script: false, style: false, img: false, font: false, connect: false, media: false, object: false };
