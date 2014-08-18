@@ -14,8 +14,6 @@ var ReportController = baucis.rest('Report');
 ProjectController.findBy('hash');
 
 ProjectController.get('/:hash/groups', function(req, res) {
-  console.log(req.params, req.body, req.query);
-
   var startDate = new Date( Number(req.query.startDate))
   var endDate = new Date( Number(req.query.endDate))
   var directives = req.query.directives
@@ -24,8 +22,6 @@ ProjectController.get('/:hash/groups', function(req, res) {
 
   if (!_.isArray(directives))
     directives = [directives];
-
-  console.log(startDate, endDate, directives, limit, bucket);
 
   async.auto({
     project: function(next) {
@@ -162,7 +158,7 @@ module.exports = router;
 function buckets(bucketSize, startDate, endDate, data) {
   var hist = {};
   hist[Math.round(startDate/1000)] = 0;
-  hist[Math.round(startDate/1000)] = 0;
+  hist[Math.round(endDate/1000)] = 0;
   for (var i = 0 ; i < data.length; ++i) {
 
     var reportDate = Math.round(data[i].getTime()/1000);
