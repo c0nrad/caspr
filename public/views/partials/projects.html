@@ -1,9 +1,11 @@
 
 <div class="container">
 
+<h1> Projects </h1>
+<a class="btn btn-primary btn-lg" href="/#/p/new"> New Project </a>
 
-<a class="btn btn-lrg btn-primary"> New Project </a>
-
+<br>
+<br> 
 
 <input type="text" ng-model="projectFilter" class="form-control"> 
 <table class="table">
@@ -14,7 +16,7 @@
 	</tr>
 	<tr ng-repeat="project in projects | filter : projectFilter" >
 		<td> <a href="/#/p/{{project.hash}}"> {{project.name}} </a> </td>
-		<td> {{project.count || 1}} </td>
-		<td> {{project.dla || 'Today' }} </td>
+		<td> {{project.stats.totalReports || 1}} </td>
+		<td> {{project.stats.dateLastActivity | date:'short' }} </td>
 	</tr>
 </div>

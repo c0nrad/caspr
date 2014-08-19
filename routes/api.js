@@ -1,4 +1,4 @@
-'use strict';
+'use strict;'
 
 var express = require('express');
 var router = express.Router();
@@ -9,11 +9,42 @@ var mongoose = require('mongoose');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
 
-var ProjectController = baucis.rest('Project');
 var ReportController = baucis.rest('Report');
-ProjectController.findBy('hash');
 
-ProjectController.get('/:hash/groups', function(req, res) {
+router.get('/projects', function(req, res, next) {
+  Project.find({}).exec(function(err, projects) {
+    if (err) return next(err);
+
+    res.json(projects)
+  });
+});
+
+router.post('/projects', function(req, res, next) {
+  req.body = _.pick(req.body, 'name')
+  console.log(req.body)
+  p = new Project(req.body);
+
+  p.save(function(err, project) {
+    if (err) return next(err);
+
+    res.json(project);
+  });
+});
+
+router.get('/projects/:hash', function(req, res, next) {
+  console.log(req.params, req.body, req.query)
+  Project.findOne({hash: req.params.hash}).exec(function(err, project) {
+    if (project === null) {
+      return next('project doesn\'t exist');
+    }
+
+    if (err) return next(err);
+
+    res.json(project);
+  });
+});
+
+router.get('/projects/:hash/groups', function(req, res) {
   var startDate = new Date( Number(req.query.startDate))
   var endDate = new Date( Number(req.query.endDate))
   var directives = req.query.directives
@@ -106,19 +137,12 @@ ProjectController.get('/:hash/groups', function(req, res) {
       return next(null, groups);
     }]
 
-    // groups: ['reports', 'project', function(next, results) {
-    //   var reports = results.reports;
-    //   var groups = generateGroups(reports, 50);
-    //   next(null, groups);
-    // }]
-
   }, function(err, results) {
-    //console.log(err, results);
     res.json(results);
   });
 });
 
-ProjectController.get('/:hash/stats', function(req, res) {
+router.get('/projects/:hash/stats', function(req, res) {
   async.auto({
     project: function(next) {
       Project.findOne({hash: req.params.hash}).exec(next);
@@ -147,6 +171,14 @@ ProjectController.get('/:hash/stats', function(req, res) {
         next(err, groups.length);
       });
     }],
+
+    dateLastActivity: ['project', function(next, results) {
+      var project = results.project;
+      Report.find({project: project._id}, "ts").sort({ts: -1}).limit(1).exec(function(err, results) {
+        if (results.length == 0) return next(err, 0);
+        next(err, results[0].ts);
+      })
+    }]
   }, function(err, results) {
     res.send(results);
   });

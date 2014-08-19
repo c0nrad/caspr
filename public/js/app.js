@@ -53,8 +53,16 @@ app.controller('NavController', function($location, $scope) {
   };
 }); 
 
-app.controller('ProjectsController', function(Project, $scope) {
-  $scope.projects = Project.query();
+app.controller('ProjectsController', function(Project, $scope, Stats) {
+  Project.query(function(projects) {
+    out = []
+    for (var i = 0; i < projects.length; ++i) {
+      var project = projects[i];
+      project.stats = Stats.get({id: project.hash})
+      out.push(project);
+    }
+    $scope.projects = out
+  });
 });
 
 app.controller('NewProjectController', function($scope, Project, $location) {
