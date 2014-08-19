@@ -14,67 +14,53 @@
   </div>
 </div>
 
+<div class="container">
+  <h2 style="text-align: right"> What is XSS? </h2>
+  <p> Cross Site Scripting (XSS), is a class of attacks that allow malicious users to execute scripts on another users behalf. Using XSS attackers can perform actions on behalf of another user, hijack user information/sessions, or deface websites. </p>
 
-<div class="container" style="padding-top: 100px">
-<hr>
+  <p> XSS attacks are currently one of the most popular methods for attacking web applications, and are  number 3 on OWAPS Top 10 Most Critical Web Application Security Risks (https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project). </p>
 
+  <p> Until recently, the most common defense against XSS attacks was proper escaping of all untrusted data. Most modern web frameworks escape all data by default, making this a very simple solution. But it is still common for injected data to be displayed without proper escaping. </p>
+</div>
 
-  <div class="intro">
+<div class="container">
+  <h2 style="text-align: right"> What is Content Security Policy? </h2>
 
-    <div class="block questionsBlock">
-      <div class="row">
-        <div class="col-md-4 text-center">
-          <img class="introImage" src="/img/sad.png">
-        </div>
+  <p> Content Security Policy (CSP) is a new HTTP header for specifying allowed orgins of resources. Normally when a browser loads a web page, it trust everything that it recieves. Before pesky attackers this was just fine. But when attackers perform an XSS attack, the browser see's the injected javascript and assumes it was what the server intended and executes it. </p>
 
-        <div class="col-md-8">
-          <div class="textBlock">
-            <p> Do cross site scripting attacks got you feeling down? </p>
-            <p> Are those pesky client side injections driving away customers? </p>
-            <p> Is that genital rash just not going away? </p>
-          </div>
-        </div>
+  <p> Content Security Policy is a way to white-list sources of different types of resources. For example you could specify that the browser should only execute javascript if it comes from the webserver in the form on .js files, NOT if it is in any HTML. Pretty much most of the time javascript injected via XSS is embedded into the HTML, so this would effectively stop a very large portion of XSS attacks. </p>
+
+</div>
+
+<div class="container"> 
+  <h2 style="text-align: right"> What is Caspr? </h2>
+
+  <p> Caspr is a Content Security Policy report aggregator. It allows website owners to analyze where their Content Security Policy is being violated, and how their policy is holding up over time. </p>
+
+  <ul> 
+    <li> Captures and Stores CSP reports </li>
+    <li> Publishes an API for viewing CSP reports. </li>
+    <li> Displays reports in a nice condensed form. </li>
+  </ul>
+
+</div>
+
+<div class="container"> 
+  <div class="text-center block sellBlock">
+    <div class="row">
+      <div class="col-md-6">
+        <img src="/img/happy.png">
       </div>
-    </div>
-
-    <div class="worriesBlock text-center bg-primary">
-     <p> <strong> Well worry no more! </strong> <small> (although I'd get that rash checked out...) </small> </p>
-    </div>
-
-    <div class="block whatBlock">
-      <div class="row">
-        <div class="col-md-8">
-          <div class="textBlock">
-            <p> What if I told you that by adding a single header to your website could remove an entire class of vulnerabilities. </p>
-            <p> Excited? Great! But pull you pants back up, we got some work to do first. </p>
-            <p> We need to generate a policy for your website. A policy is how your website treats internal and external scripts. </p>
-          </div>
+      <div class="col-md-6">
+        <div class="sellBlockText">
+          <p> Analyzing CSP policies is hard. </p> 
+          <p> But Caspr is here to help. </p>
         </div>
-        <div class="col-md-4 text-center">
-          <img class="introImage" src="/img/shocked.png">
-        </div>
+
+        <a class="btn btn-primary btn-lg btn-block" href="/#/p/new"> Get Started! </a>
+        <a href="http://caspr.io/#/p/a7f69e075218264105669e43ea44a796ca4b5cfcb4b7a954a3a881232845a916" class="exampleLink"> Example </a>
+
       </div>
-    </div>
-
-
-    <div class="text-center block sellBlock">
-      <div class="row">
-        <div class="col-md-6">
-          <img src="/img/happy.png">
-        </div>
-        <div class="col-md-6">
-          <div class="sellBlockText">
-            <p> Building a CSP policy is hard. </p> 
-            <p> But Caspr is here to help. </p>
-          </div>
-
-          <a class="btn btn-primary btn-lg btn-block" href="/#/p/new"> Get Started! </a>
-          <a href="http://caspr.io/#/p/a7f69e075218264105669e43ea44a796ca4b5cfcb4b7a954a3a881232845a916" class="exampleLink"> Example </a>
-
-        </div>
-      </div>
-    </div>
-
     </div>
   </div>
 </div>
