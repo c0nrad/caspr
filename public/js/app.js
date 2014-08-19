@@ -25,7 +25,6 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
 
     .when('/contact', {
       templateUrl: "views/partials/contact.html", 
-      controller: 'ContactController'
     })
 }]);
 
