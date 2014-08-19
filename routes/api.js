@@ -21,7 +21,6 @@ router.get('/projects', function(req, res, next) {
 
 router.post('/projects', function(req, res, next) {
   req.body = _.pick(req.body, 'name')
-  console.log(req.body)
   p = new Project(req.body);
 
   p.save(function(err, project) {
@@ -32,7 +31,6 @@ router.post('/projects', function(req, res, next) {
 });
 
 router.get('/projects/:hash', function(req, res, next) {
-  console.log(req.params, req.body, req.query)
   Project.findOne({hash: req.params.hash}).exec(function(err, project) {
     if (project === null) {
       return next('project doesn\'t exist');

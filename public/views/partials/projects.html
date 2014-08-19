@@ -16,7 +16,7 @@
 	</tr>
 	<tr ng-repeat="project in projects | filter : projectFilter" >
 		<td> <a href="/#/p/{{project.hash}}"> {{project.name}} </a> </td>
-		<td> {{project.stats.totalReports || 1}} </td>
+		<td> {{project.stats.totalReports || 0}} </td>
 		<td> {{project.stats.dateLastActivity | date:'short' }} </td>
 	</tr>
 </div>
