@@ -60,7 +60,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var allowCrossDomain = function(req, res, next) {
     //res.header('Content-Security-Policy', "default-src * 'unsafe-eval'; script-src 'self' 'unsafe-eval'; object-src 'none'; style-src 'self' 'unsafe-inline' 'unsafe-eval'; report-uri /endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21")
-    res.header('Content-Security-Policy-Report-Only', "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri http://localhost:3000/endpoint/eaeceaec5227f9cd1b23b37cc22b0cd7cfa32a1026245c07de19564688f504ba");
+    res.header('Content-Security-Policy-Report-Only', "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri https://caspr.io/endpoint/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21");
     //res.header('Access-Control-Allow-Origin', config.allowedDomains);
     //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     //res.header('Access-Control-Allow-Headers', 'Content-Type');
