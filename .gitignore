@@ -4,3 +4,5 @@ node_modules
 public/bower_components
 dump
 bin/certs
+exceptions.log
+log.log
