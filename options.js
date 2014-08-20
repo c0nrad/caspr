@@ -2,7 +2,7 @@ var logger = require('./logger');
 var opts = require("nomnom")
 .option('port', {
   abbr: 'p',
-  default: 3000,
+  default: process.env.PORT || 3000,
   help: 'Port to run http caspr'
 })
 .option('ssl', {
