@@ -52,7 +52,7 @@ To use capped collections, either set it manually or pass the size in bytes you'
 forever bin/www --capped 500000000 // .5GB
 ```
 
-```javascript
+```
 use caspr
 db.runCommand({convertToCapped: 'reports', size: 500000000 })
 ```
@@ -63,7 +63,7 @@ http://docs.mongodb.org/manual/reference/command/convertToCapped/
 All reports are stored within MongoDB. So a script such as the following can be used to dump all reports into a json file
 
 dump.js
-```json
+```
 cursor = db.getSiblingDB('caspr').reports.find();
 while ( cursor.hasNext() ) {
    printjson( cursor.next() );
