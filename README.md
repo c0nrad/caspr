@@ -17,16 +17,19 @@ npm install
 forever bin/www
 ```
 
-## Usage XXX get recent
+## Usage
 
 ```
+$> node bin/www --help
+
 Usage: node www [options]
 
 Options:
-   -p, --port      Port to run http caspr  [3000]
-   --ssl           Run ssl on port 443  [false]
-   --sslKeyFile    SSL key file for ssl  [./bin/certs/key.pem]
-   --sslCertFile   SSL certificate file for ssl  [./bin/certs/cert.pem]
+   -p, --port               Port to run http caspr  [3000]
+   --ssl                    Run ssl on port 443  [false]
+   --sslKeyFile             SSL key file for ssl  [./bin/certs/key.pem]
+   --sslCertFile            SSL certificate file for ssl  [./bin/certs/cert.pem]
+   --cappedCollectionSize   Size of report collection in bytes  [0]
 ```
 
 ### SSL
