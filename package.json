@@ -25,6 +25,7 @@
     "moment": "*",
     "winston": "*",
     "underscore": "*",
-    "bower": "*"
+    "bower": "*",
+    "nomnom": "*"
   }
 }

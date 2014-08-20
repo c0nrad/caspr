@@ -1,5 +1,15 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var opts = require('nomnom');
+var logger = require('../logger');
+
+var opts = require('../options');
+
+reportOptions = {}
+if (opts.cappedCollectionSize != 0) {
+  logger.info("Capping report collection at", opts.cappedCollectionSize)
+  reportOptions['capped'] = opts.cappedCollectionSize;
+}
 
 var ReportSchema = new Schema({
   project: {type: Schema.Types.ObjectId, ref: 'Project'},
@@ -21,7 +31,7 @@ var ReportSchema = new Schema({
     column_number: Number,
     status_code: Number
   },
-})
+}, reportOptions)
 
 // XXX: lrn2index
 ReportSchema.index({ project: 1 }); 
