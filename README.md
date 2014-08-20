@@ -2,6 +2,8 @@
 
 Content Security Policy Report Aggregator
 
+https://caspr.io
+
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/c0nrad/caspr)
 
 ## Deployment
@@ -53,7 +55,7 @@ db.runCommand({convertToCapped: 'reports', size: 500000000 })
 ```
 http://docs.mongodb.org/manual/reference/command/convertToCapped/
 
-## Raw dumps
+## Raw reports dump
 
 All reports are stored within MongoDB. So a script such as the following can be used to dump all reports into a json file
 
@@ -68,3 +70,13 @@ while ( cursor.hasNext() ) {
 ```bash
 mongo dump.js > dump.json
 ```
+
+## Future
+
+- Auto Policy Generator
+  - More beginner friendly
+- More flexable API for handling reports
+
+## Contact
+
+c0nrad@c0nrad.io
