@@ -21,8 +21,9 @@ route.post('/:hash', function(req, res) {
       if (project == undefined)
         return next("Project doesn't exist.");
 
+      if (req.body.csp_report == undefined)
+        return next('Not a valid report');
 
-      console.log(req.body.csp_report)
       var directive = req.body.csp_report.violated_directive;
       if (directive !== undefined && directive !== "") {
         directive = directive.split(' ')[0];
