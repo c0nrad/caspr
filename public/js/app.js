@@ -95,6 +95,7 @@ app.filter('directiveType', function() {
 app.controller('ProjectController', function($scope, Project, Report, Group, $routeParams, Stats) {
   $scope.seriesCount = 3;
   $scope.host = window.location.host;
+  $scope.protocol = window.location.protocol;
   $scope.range = "";
 
   $scope.startDate = new Date();
