@@ -21,12 +21,17 @@ route.post('/:hash', function(req, res) {
       if (project == undefined)
         return next("Project doesn't exist.");
 
+      var directive = req.body.csp_report.violated_directive;
+      if (directive !== undefined && directive !== "") {
+        directive = dirctive.split(' ')[0];
+      }
+
       var e = new Report({
         ip: req.ip,
         project: project._id,
         raw: req.body.data,
         csp_report: req.body.csp_report, 
-        directive: req.body.csp_report.violated_directive.split(' ')[0]
+        directive: directive
       })
 
       e.save(next);
