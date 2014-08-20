@@ -6,7 +6,7 @@
     "node": "0.11.x"
   },
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./bin/www --port 80",
     "postinstall": "./node_modules/bower/bin/bower install"
   },
   "dependencies": {
