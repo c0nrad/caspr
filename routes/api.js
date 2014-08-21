@@ -8,8 +8,10 @@ var _ = require('underscore');
 var mongoose = require('mongoose');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
+var Filter = mongoose.model('Filter');
 
 var ReportController = baucis.rest('Report');
+var FilterController = baucis.rest('Filter');
 
 router.get('/projects', function(req, res, next) {
   Project.find({}).exec(function(err, projects) {
@@ -41,6 +43,28 @@ router.get('/projects/:hash', function(req, res, next) {
     res.json(project);
   });
 });
+
+router.get('/projects/:hash/filters', function(req, res, next) {
+
+  async.auto({
+    project: function(next) {
+      Project.findOne({hash: req.params.hash}).exec(function(err, project) {
+        if (project === null) {
+          return next('project doesn\'t exist');
+        }
+        next(err, project);
+      });
+    },
+
+    filters: ["project", function(next, results) {
+      var project = results.project;
+      Filter.find({project: project._id}).exec(next)
+    }]
+  }, function(err, results) {
+    console.log(err, results);
+    res.send(results.filters);
+  });
+})
 
 router.get('/projects/:hash/groups', function(req, res) {
   var startDate = new Date( Number(req.query.startDate))
