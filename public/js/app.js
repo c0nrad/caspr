@@ -28,23 +28,6 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
     })
 }]);
 
-//Resources
-app.factory('Project', function($resource) {
-  return $resource('/api/projects/:id', {id: '@id'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:id/groups', isArray: true}});
-});
-
-app.factory('Report', function($resource) {
-  return $resource('/api/reports/:id', {id: '@id'}, {update: {method: 'PUT'}})
-});
-
-app.factory('Group', function($resource) {
-  return $resource('/api/projects/:id/groups', {id: '@id'}, {});
-})
-
-app.factory('Stats', function($resource) {
-  return $resource('/api/projects/:id/stats', {id: '@id'}, {});
-})
-
 app.controller('HomeController', function() {});
 
 app.controller('NavController', function($location, $scope) {
@@ -74,25 +57,8 @@ app.controller('NewProjectController', function($scope, Project, $location) {
   }
 });
 
-app.filter('directiveType', function() {
-  return function(input, allowedDirectives) {
-    if (input == undefined || input.length == 0)
-      return;
 
-    var out = []
-    for (var i = 0; i < input.length; ++i) {
-      var report = input[i];
-      var directive = report.directive.split('-')[0]
-
-      if (allowedDirectives[directive])
-        out.push(report);
-    }
-
-    return out;
-  };
-});
-
-app.controller('ProjectController', function($scope, Project, Report, Group, $routeParams, Stats) {
+app.controller('ProjectController', function($scope, Project, Filter, FilterService, Report, Group, $routeParams, Stats) {
   $scope.seriesCount = 3;
   $scope.host = window.location.host;
   $scope.protocol = window.location.protocol;
@@ -168,6 +134,16 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
       $scope.stats.reportCount = results.reportCount;
       $scope.stats.groupCount = results.groupCount;
       buildTimeSeriesChart(results.groups, $scope.seriesCount);
+
+
+      buildAnalytics(results.groups);
+      //buildFilters(results.groups);
+      Filter.query({hash: $routeParams.id}, function(filters) {
+        var group = $scope.groups[0];
+        var filter = $scope.filters[0];
+        FilterService.filterReports(filter, groups);
+      })
+
     });
   }
   $scope.setRange('day');
@@ -251,10 +227,32 @@ app.controller('ProjectController', function($scope, Project, Report, Group, $ro
 
     graph.render();
   }
-});
 
-app.filter('stringify', function() {
-  return function(obj) {
-    return JSON.stringify(obj, null, 2);
-  };
+  function buildAnalytics(reports) {
+    var fieldsHist = {}
+
+    for (var i = 0; i < reports.length; ++i) {
+      var report = reports[i];
+      var keys = _.keys(report.csp_report)
+      for (var k = 0; k < keys.length; ++k) {
+        var key = keys[k];
+        if (key in fieldsHist)
+          fieldsHist[key] += report.count;
+        else
+          fieldsHist[key] = report.count;
+      }
+    }
+    console.log(fieldsHist);
+  }
+
+  $scope.addFilter = function() {
+    $scope.filter.$save();
+    $scope.filter = new Filter({ project: $routeParams.id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+    $scope.filters = Filter.query({hash: $routeParams.id})
+  }
+  
+  $scope.filter = new Filter({ project: $routeParams.id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+  $scope.filters = Filter.query({hash: $routeParams.id}, function(filters) {
+    console.log(filters);
+  })
 });
