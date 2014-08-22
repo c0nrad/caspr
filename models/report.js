@@ -35,11 +35,9 @@ var ReportSchema = new Schema({
   },
 
   // Guess work
-  classification: {
-    directive: String,
-    type: String,
-    name: String,
-  }
+  classification: String,
+  directive: String,
+  name: String,
 
 }, reportOptions)
 

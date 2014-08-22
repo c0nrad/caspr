@@ -61,7 +61,7 @@ router.get('/projects/:id/stats', function(req, res) {
         },
         {
           $group: {
-            _id: "$csp_report",
+            _id: "$csp-report",
           }
         }
       ]).exec(function(err, groups) {

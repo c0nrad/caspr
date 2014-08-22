@@ -37,14 +37,14 @@ app.factory('FilterService', function() {
   }
 
   out.isMatch = function(filter, group) {
-    var report = group['csp_report'];
+    var report = group['csp-report'];
     var expression = filter.expression;
     var field = filter.field;
 
     if (expression[0] === "/" && expression[expression.length-1] === "/")
       expression = expression.substring(1, filter.expression.length - 1)
 
-    if (field in report && report[field].match( RegExp(expression) )) {
+    if (report[field] !== undefined && report[field] !== null && report[field].match( RegExp(expression) )) {
       return true;
     }
     return false;

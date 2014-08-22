@@ -41,23 +41,27 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket
 
     {
       $group: {
-        _id: "$csp_report",
+        _id: "$csp-report",
         count: {$sum: 1},
-        csp_report: {$last: "$csp_report"},
+        'csp-report': {$last: "$csp-report"},
         data: { $push: "$ts" },
         latest: { $max: "$ts" },
         directive: {$last: "$directive" },
+        classification: {$last: "$classification" },
+        name: {$last: "$name" },
+
       } 
     },
 
     {
       $project: {
         count: 1,
-        csp_report: 1,
+        'csp-report': 1,
         data: 1,
         latest: 1,
         directive: 1,
-        name: { $concat: [ "$directive", " - ", "$csp_report.document_uri", " - ", "$csp_report.blocked_uri"]}
+        classification: 1,
+        name: 1
       }
     },
 

@@ -33,11 +33,9 @@ route.post('/:id', function(req, res) {
         'csp-report': report,
         ip: req.ip,
         headers: JSON.stringify(req.headers),
-        classification: {
-          directive: getDirective(report),
-          type: getType(report),
-          name: getName(report),
-        }
+        directive: getDirective(report),
+        classification: getType(report),
+        name: getName(report),
       })
 
       r.save(next);

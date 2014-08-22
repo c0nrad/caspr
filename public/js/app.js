@@ -117,10 +117,11 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
     params.directives =  _.chain(params.directives).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
     params.id = $stateParams.id;
 
-    Group.get(params, function(results) {
-      $scope.groups = results.groups;
-      $scope.reportCount = results.reportCount;
-      $scope.groupCount = results.groupCount;
+    Group.query(params, function(groups) {
+      $scope.groups = groups
+      //$scope.groups = results.groups;
+      //$scope.reportCount = results.reportCount;
+      //$scope.groupCount = results.groupCount;
 
       $rootScope.$emit('applyFilters');
     });
@@ -187,7 +188,6 @@ app.controller('TableController', function($scope, QueryParams) {
   };
 
   $scope.urlDisplay = function(line) {
-    console.log(line);
     if (line.length < 50) {
       return line;
     }
@@ -209,7 +209,6 @@ app.controller('FiltersController', function($scope, $rootScope, Filter, FilterS
   }
 
   $scope.saveFilter = function(index) {
-    console.log("saveFilter", index);
     $scope.filters[index].$update({id: $scope.filters[index]._id}, function() {
       reloadFilters();
     })
@@ -260,7 +259,6 @@ app.controller('GraphController', function($scope) {
   buildTimeSeriesChart($scope.groups, $scope.seriesCount);
 
   function buildTimeSeriesChart(groups, seriesCount) {
-    console.log(seriesCount, groups);
     document.querySelector('#tschart').innerHTML = '';
     document.querySelector('#legend').innerHTML = '';
     document.querySelector('#y_axis').innerHTML = '';
