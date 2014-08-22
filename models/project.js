@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var ProjectSchema = new Schema({
   name: {type: String, default: "My Project"},
-  hash: {type: String, default: "", unique: true},
+  ts: {type: Date, default: Date.now},
   policy: {type: String, default: ""},
 });
 ProjectSchema.index({ hash: 1 }); 

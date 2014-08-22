@@ -1,0 +1,98 @@
+<div class="policy">
+  <div ng-hide="project.policy">
+    <div class="row">
+      <div class="col-md-3">
+        <img src="/img/happy.png" width="100%"> </img>
+      </div>
+      <div class="col-md-9"> 
+        <p> Please add the following header to your website: </p>
+        <pre>Content-Security-Header: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri {{protocol}}//{{host}}/endpoint/{{project.hash}} </pre>
+      </div>
+    </div>
+  </div>
+
+  <div ng-show="project.policy">
+    <div class="row">
+      <div class="col-md-3">
+        <img src="/img/happy.png" width="100%"> </img>
+      </div>
+      <div class="col-md-9"> 
+        <strong> Last Seen Policy </strong>
+        <pre>{{project.policy}}</pre>
+
+        <strong> Project Report-URI </strong>
+        <pre> {{protocol}}//{{host}}/endpoint/{{project.hash}} </pre>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Total Reports: </strong> 
+      <div class="statNumber"> {{stats.totalReports}} </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="well"> 
+      <strong> Total Unique Reports: </strong> 
+      <div class="statNumber"> {{stats.uniqueReportsTotal}} </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="well">
+      <strong> Date Created: </strong>
+      <div class="statNumber"> {{project.ts | fromNow }} </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="well">
+      <strong> Date Last Report: </strong>
+      <div class="statNumber"> {{ stats.dateLastActivity | fromNow }} </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h3> Import Data </h3>
+
+    <button class="btn btn-primary"> Upload JSON Dump (coming soon) </button>
+
+    <h3> Backup Data </h3>
+
+    <button class="btn btn-primary"> Create New Backup (coming soon) </button>
+
+    <h4> Previous Backups </h4>
+    <a> 1408644782927.json (coming soon) </a> <br />
+    <a> 1408644782927.json (coming soon) </a> <br />
+    <a> 1408644782927.json (coming soon) </a>
+
+
+  </div>
+
+  <div class="col-md-6">
+    <h3> Settings </h3>
+
+    <button class="btn btn-danger"> Delete all reports (coming soon)</button> <br>
+    <button class="btn btn-danger"> Delete Project (coming soon)</button>
+  </div>
+</div>
+
+<!-- 
+ <div class="well"> 
+        <strong> Reports: </strong> 
+        <div class="statNumber"> {{stats.reportCount}} </div>
+      </div>
+
+     
+
+      <div class="well"> 
+        <strong> Unique Reports: </strong> 
+        <div class="statNumber"> {{stats.groupCount}} </div>
+      </div>
+
+     
+    </div> -->

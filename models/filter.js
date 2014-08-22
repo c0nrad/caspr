@@ -7,7 +7,7 @@ var FilterSchema = new Schema({
 	expression: {type: String, default: "/^https/" },
 	name: { type: String, default: "HTTPS" },
 
-	filter: {type: Schema.Types.ObjectId, ref: "Project" }
+	project: {type: Schema.Types.ObjectId, ref: "Project" }
 });
 
 module.exports = mongoose.model('Filter', FilterSchema);

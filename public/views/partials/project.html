@@ -1,179 +1,25 @@
-
-<div class="container">
-
-<h1 ng-bind="project.name"> Project Title </h1>
-<hr>
-
-<div class="policy">
-  <div ng-hide="project.policy">
-    <div class="row">
-      <div class="col-md-3">
-        <img src="/img/happy.png" width="100%"> </img>
-      </div>
-      <div class="col-md-9"> 
-        <p> Please add the following header to your website: </p>
-        <pre>Content-Security-Header: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri {{protocol}}//{{host}}/endpoint/{{project.hash}} </pre>
-      </div>
-    </div>
-  </div>
-
-  <div ng-show="project.policy">
-    <div class="row">
-      <div class="col-md-3">
-        <img src="/img/happy.png" width="100%"> </img>
-      </div>
-      <div class="col-md-9"> 
-        <p> Last Seen Policy </p>
-        <pre>{{project.policy}}</pre>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="well control-panel">
+<div class="container-fluid">
 
   <div class="row">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label> Data Range: </label> <br>
-        <div class="btn-group">
-          <button type="button" ng-repeat="period in ['hour', 'day', 'week', 'month']" class="btn btn-default" ng-class="{active: range == period}" ng-click="setRange(period)"> {{period}} </button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label> Bucket Size: </label> <br>
-          <div class="btn-group">
-            <button type="button" ng-repeat="b in ['minute', 'hour', 'day']" class="btn btn-default" ng-class="{active: bucketSize == b}" ng-click="setBucket(b)"> {{b}} </button>
-          </div>
-      </div>
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li ui-sref-active="active"><a ui-sref="project.overview">Overview</a></li> 
+        <li ui-sref-active="active"><a ui-sref="project.query">Query <span class="badge pull-right alert-success">{{reportCount}} Reports</span> </a></li>
+        <li ui-sref-active="active"><a ui-sref="project.filters">Filters <span class="badge pull-right alert-danger">-{{filteredReportsCount}} Reports</span></a></li>
+        <li ui-sref-active="active"><a ui-sref="project.graph">Graph</a></li>
+        <li ui-sref-active="active"><a ui-sref="project.table">Table</a></li>
+      </ul>
     </div>
+    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <span style="float: right; text-align: right">
+            Reports: {{reportCount}} / {{stats.totalReports}}<br>
+            Groups: {{groupCount}} / {{stats.uniqueReportsTotal}}
+          </span>
 
-    <div class="col-md-8">
-      <div class="form-group">
-        <label> Number of Tabel Elements </label>  
-        <div class="input-group">  
-          <span class="input-group-addon" ng-click="limit = limit - 25">-</span>
-          <input type="text" class="form-control" ng-model="limit">
-          <span class="input-group-addon" ng-click="limit = limit + 25">+</span>
-        </div>
-      </div>
+      <h1 class="page-header">{{project.name}}</h1>
 
-      <div class="form-group">
-        <label> Number of Graph Series: </label>
-        <div class="input-group">
-          <span class="input-group-addon" ng-click="seriesCount = seriesCount - 1">-</span>
-          <input type="text" class="form-control" ng-model="seriesCount">
-          <span class="input-group-addon" ng-click="seriesCount = seriesCount + 1">+</span>
-        </div>
-      </div>
+      <div ui-view></div>
     </div>
   </div>
-
-  <div class="form-group">
-    <label> Allowed Directives: </label>
-    <div class="directiveFilter">
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox1" ng-model="directive.default"> default
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox2" ng-model="directive.script"> script
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.style"> style
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox1" ng-model="directive.img"> img
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox2" ng-model="directive.font"> font
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.connect"> connect
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.media"> media
-      </label>
-      <label class="checkbox-inline">
-        <input type="checkbox" id="inlineCheckbox3" ng-model="directive.object"> object
-      </label>
-
-      <button class="button-inline btn btn-primary" ng-click="allOn()"> All On </button>
-      <button class="button-inline btn btn-danger" ng-click="allOff()"> All Off </button>
-    </div>
-  </div>
-
-</div>
-
-<div ng-hide="groups.length" class="alert alert-danger" role="alert"> <strong> Heads up! </strong> No reports have been recieved for range! </div>
-
-<div class="row">
-  <div class="col-md-2">
-    <div class="stats">
-      <div class="well"> 
-        <strong> Reports: </strong> 
-        <div class="statNumber"> {{stats.reportCount}} </div>
-      </div>
-
-      <div class="well"> 
-        <strong> Total Reports: </strong> 
-        <div class="statNumber"> {{stats.totalReports}} </div>
-      </div>
-
-      <div class="well"> 
-        <strong> Unique Reports: </strong> 
-        <div class="statNumber"> {{stats.groupCount}} </div>
-      </div>
-
-      <div class="well"> 
-        <strong> Total Unique Reports: </strong> 
-        <div class="statNumber"> {{stats.uniqueReportsTotal}} </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-md-10">
-
-    <div id="chartHolder">
-      <div style="position: absolute; left: 50px" id="legend"></div>
-
-      <div id="chart_container">
-        <div id="y_axis"></div>
-        <div id="tschart"></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<br>
-
-<div style="height: 500px">
-<table class="table">
-
-  <tr>
-    <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'directive') }" ng-click="tableSort('directive')"> Directive </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Blocked URI </th>
-    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
-  </tr>
-
-  <tbody ng-repeat="group in groups | filter : search | directiveType : directive | orderBy:predicate:tableReversed">
-    <tr ng-click="group.selected=!group.selected">
-      <td> {{group.count}} </td>
-      <td> {{group.latest | date: 'short'}} </td>
-      <td> {{group.directive}} </td>
-      <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
-      <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
-    </tr>
-    <tr ng-show="group.selected" colspan="5">
-
-      <td colspan="5"> <pre> {{ group.csp_report | stringify }} </pre> </td>
-
-    </tr>
-  </tbody>
-</table>
-</div>
 
 </div>

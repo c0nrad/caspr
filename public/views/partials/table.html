@@ -1,0 +1,25 @@
+<table class="table">
+
+  <tr>
+    <th ng-class="{ 'bg-primary': (predicate == 'count') }" ng-click="tableSort('count')"> Count </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'latest') }" ng-click="tableSort('latest')"> Last Timestamp </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'directive') }" ng-click="tableSort('directive')"> Directive </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.blocked_uri') }" ng-click="tableSort('csp_report.blocked_uri')"> Blocked URI </th>
+    <th ng-class="{ 'bg-primary': (predicate == 'csp_report.document_uri') }" ng-click="tableSort('csp_report.document_uri')"> Document URI </th>
+    <th> Policy </th>
+  </tr>
+
+  <tbody ng-repeat="group in groups | orderBy:predicate:tableReversed">
+    <tr ng-click="group.selected=!group.selected">
+      <td> {{group.count}} </td>
+      <td> {{group.latest | date: 'short'}} </td>
+      <td> {{group.directive}} </td>
+      <td> <a href="{{group.csp_report.blocked_uri}}"> {{urlDisplay(group.csp_report.blocked_uri)}} </a> </td>
+      <td> <a href="{{group.csp_report.document_uri}}"> {{urlDisplay(group.csp_report.document_uri)}} </a> </td>
+      <td> <button class="btn btn-default"> View </button> </td>
+    </tr>
+    <tr ng-show="group.selected" colspan="5">
+      <td colspan="5"> <pre> {{ group.csp_report | stringify }} </pre> </td>
+    </tr>
+  </tbody>
+</table>

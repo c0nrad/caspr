@@ -74,13 +74,11 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var index = require('./routes/index');
 var api = require('./routes/api');
 var endpoint = require('./routes/endpoint');
 
-app.use('/', routes);
-app.use('/users', users);
+app.use('/', index);
 app.use('/api', api);
 app.use('/endpoint', endpoint);
 
@@ -99,7 +97,7 @@ if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         winston.warn(err.message);
         res.status(err.status || 500);
-        res.render('error', {
+        res.json({
             message: err.message,
             error: err
         });

@@ -1,0 +1,18 @@
+<div id="chartHolder">
+  <div style="position: absolute; left: 50px" id="legend"></div>
+
+  <div id="chart_container">
+    <div id="y_axis"></div>
+    <div id="tschart"></div>
+  </div>
+
+</div>
+
+<div class="form-group">
+<label> Number of Graph Series: </label>
+<div class="input-group">
+  <span class="input-group-addon" ng-click="seriesCount = seriesCount - 1">-</span>
+  <input type="text" class="form-control" ng-model="seriesCount">
+  <span class="input-group-addon" ng-click="seriesCount = seriesCount + 1">+</span>
+</div>
+</div>

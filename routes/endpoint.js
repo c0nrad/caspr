@@ -8,12 +8,12 @@ var winston = require('../logger');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
 
-route.post('/:hash', function(req, res) {
-  var hash = req.params.hash;
+route.post('/:id', function(req, res) {
+  var id = req.params.id;
 
   async.auto({
     project: function(next) {
-      Project.findOne({hash: hash}).exec(next)
+      Project.findById(id).exec(next)
     },
 
     report: ['project', function(next, results) {
@@ -43,7 +43,10 @@ route.post('/:hash', function(req, res) {
     updatePolicy: ['project', 'report', function(next, results) {
       var project = results.project;
       var report = results.report[0];
-      project.policy = report.csp_report.original_policy;
+
+      if (report.csp_report.original_policy !== "")
+        project.policy = report.csp_report.original_policy;
+
       project.save(next);
     }]
 

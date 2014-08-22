@@ -1,0 +1,104 @@
+finalgroups length: {{finalGroups.length}}
+
+<div id="filters" class="well">
+
+  <div class="form-inline">
+
+    <div class="form-group">
+      <label> Name </label>
+      <input type="text" class="form-control" ng-model="filter.name">
+    </div>
+
+    <div class="form-group">
+      <label> Field </label>
+      <input type="text" class="form-control" ng-model="filter.field">
+    </div>
+
+    <div class="form-group">
+      <label> Expression </label>
+      <input type="text" class="form-control" ng-model="filter.expression">
+    </div>
+
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="filter.exclude" ng-true-value="true" ng-false-value="false"> Exclude
+      </label>
+    </div>
+
+    <button type="text" class="btn btn-default" ng-click="addFilter()"> Add Filter </button>
+  </div>
+</div>
+
+
+<div class="well"> 
+  <strong> Total Filters: </strong> 
+  <div class="statNumber"> {{filters.length}} </div>
+</div>
+
+<div class="well"> 
+  <strong> Total Groups Blocked: </strong> 
+  <div class="statNumber"> {{filters.length}} </div>
+</div>
+
+<div class="well"> 
+  <strong> Total Reports Blocked: </strong> 
+  <div class="statNumber"> {{filteredReportsCount}} </div>
+</div>
+
+
+
+
+<table class="table">
+  <tr>
+    <th> Name </th>
+    <th> Exclude </th>
+    <th> Field </th>
+    <th> Expression </th>
+    <th> Blocked Groups </th>
+    <th> Blocked Reports </th>
+    <th> Action </th>
+  </tr>
+
+  <tbody ng-repeat="filter in filters">
+    <tr ng-click="filter.selected=!filter.selected">
+      <td> {{filter.name}} </td>
+      <td> {{filter.exclude}} </td>
+      <td> {{filter.field}} </td>
+      <td> {{filter.expression}} </td>
+      <td> {{filter.groups.length}} </td>
+      <td> {{filter.count}} </td>
+      <td> <button class="btn btn-default"> More </button> </td>
+    </tr>
+    <tr ng-show="filter.selected">
+      <td colspan="5">
+        <div class="form-inline">
+          <div class="form-group">
+            <label> Name </label>
+            <input type="text" class="form-control" ng-model="filter.name">
+          </div>
+          <div class="form-group">
+            <label> Field </label>
+            <input type="text" class="form-control" ng-model="filter.field">
+          </div>
+          <div class="form-group">
+            <label> Expression </label>
+            <input type="text" class="form-control" ng-model="filter.expression">
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" ng-model="filter.exclude" ng-true-value="true" ng-false-value="false"> Exclude
+            </label>
+          </div>
+          <button type="text" class="btn btn-default" ng-click="saveFilter($index)"> Save </button>
+          <button type="text" class="btn btn-danger" ng-click="deleteFilter($index)"> Delete </button>
+        </div>
+
+
+        <pre> {{filter.groups | reportAndCount | stringify }} </pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
