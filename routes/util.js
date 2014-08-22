@@ -29,8 +29,8 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
   return out;
 }
 
-exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket, projectId, next) {
-  Report.aggregate([
+exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket, projectId, filters, next) {
+  var queryMatch = [
     {
       $match: {
         project: projectId,
@@ -38,7 +38,9 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket
         directive: {$in: directives}
       }
     },
-
+  ]
+  var filterMatch = buildMatchFilters(filters);
+  var group = [
     {
       $group: {
         _id: "$csp-report",
@@ -49,31 +51,128 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket
         directive: {$last: "$directive" },
         classification: {$last: "$classification" },
         name: {$last: "$name" },
-
       } 
     },
+    { $sort : { count: -1 } },
+    { $limit: limit }
+  ];
 
-    {
-      $project: {
-        count: 1,
-        'csp-report': 1,
-        data: 1,
-        latest: 1,
-        directive: 1,
-        classification: 1,
-        name: 1
-      }
-    },
-
-    {
-      $sort : {
-        count: -1
-      }
-
-    },
-
-    {
-      $limit: limit
-    }
-  ]).exec(next);
+  var aggregation = _.reduce([queryMatch, filterMatch, group], function(a, b) { return a.concat(b)}, [])
+  console.log(  JSON.stringify(aggregation, null, 4))
+  Report.aggregate(aggregation).exec(next);
 }
+
+exports.filterGroups = function(filters, groups) {
+  buildMatchFilters(filters);
+  return groups;
+}
+
+var buildMatchFilters = exports.buildMatchFilters = function(filters) {
+  var out = []
+  for (var i = 0; i < filters.length; ++i) {
+    var filter = filters[i];
+    var expression = filter.expression;
+    var field = 'csp-report.' + filter.field;
+    if (expression[0] === "/" && expression[expression.length-1] === "/") {
+      expression = expression.substring(1, filter.expression.length - 1) 
+    }
+
+    var exp1 = {}
+    exp1[field] = {'$exists': false}
+    var exp2 = {}
+    exp2[field] = {'$not': RegExp(expression)}
+    var match = {
+      '$match': {
+        '$or': [_.clone(exp1), _.clone(exp2)]
+      }
+    }
+
+    var match = {
+      '$match': exp2
+    }
+    out.push(match);
+  }
+  return out;
+}
+
+// export.applyFilters = function( ) {
+//   var groups = $scope.groups;
+//     var filters = $scope.filters;
+//     $scope.filteredGroups = []
+
+//     if (groups == undefined || filters == undefined)
+//       return;
+
+//     if (groups.length == 0 || filters.length == 0)
+//       return;
+
+//     var finalGroups = _.clone(groups);
+//     for (var i = 0; i < filters.length; ++i){
+//       filters[i].groups = FilterService.blockedGroupReports(filters[i], groups);
+//       filters[i].count = FilterService.countReports(filters[i].groups);
+
+//      if (filters[i].exclude) {
+//         finalGroups = FilterService.allowedGroups(filters[i], finalGroups);
+//      }
+//     }
+
+//     $scope.finalGroups = finalGroups;
+//     $scope.finalReportCount = FilterService.countReports(finalGroups);
+//     $scope.filteredReportsCount = $scope.reportCount - $scope.finalReportCount;
+
+//     $scope.filters = filters;
+//   })
+
+// app.factory('FilterService', function() {
+//   var out = {}
+
+//   out.blockedGroupReports = function(filter, groups) {
+//     var filteredGroups = [];
+    
+//     for (var i = 0; i < groups.length; ++i) {
+//       if (out.isMatch(filter, groups[i])) {
+//         filteredGroups.push(groups[i]);
+//       }
+
+//     }
+//     return filteredGroups;
+//   }
+
+//   out.isMatch = function(filter, group) {
+//     var report = group['csp-report'];
+//     var expression = filter.expression;
+//     var field = filter.field;
+
+//     if (expression[0] === "/" && expression[expression.length-1] === "/")
+//       expression = expression.substring(1, filter.expression.length - 1)
+
+//     if (report[field] !== undefined && report[field] !== null && report[field].match( RegExp(expression) )) {
+//       return true;
+//     }
+//     return false;
+//   }
+
+//   out.allowedGroups = function(filter, groups) {
+//     var filteredGroups = [];
+    
+//     for (var i = 0; i < groups.length; ++i) {
+//       if (!out.isMatch(filter, groups[i])) {
+//         filteredGroups.push(groups[i]);
+//       }
+
+//     }
+//     return filteredGroups;
+//   }
+
+//   out.countReports = function(groups) {
+//     if (groups == undefined || groups.length == 0)
+//       return 0
+
+//     return _.reduce(groups, function(c, group) { return c + group.count }, 0)
+//   }
+
+//   return out;
+// })
+
+
+// }

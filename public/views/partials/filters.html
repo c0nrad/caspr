@@ -1,4 +1,3 @@
-finalgroups length: {{finalGroups.length}}
 
 <div id="filters" class="well">
 
@@ -30,28 +29,10 @@ finalgroups length: {{finalGroups.length}}
 </div>
 
 
-<div class="well"> 
-  <strong> Total Filters: </strong> 
-  <div class="statNumber"> {{filters.length}} </div>
-</div>
-
-<div class="well"> 
-  <strong> Total Groups Blocked: </strong> 
-  <div class="statNumber"> {{filters.length}} </div>
-</div>
-
-<div class="well"> 
-  <strong> Total Reports Blocked: </strong> 
-  <div class="statNumber"> {{filteredReportsCount}} </div>
-</div>
-
-
-
-
 <table class="table">
   <tr>
     <th> Name </th>
-    <th> Exclude </th>
+    <th> Active </th>
     <th> Field </th>
     <th> Expression </th>
     <th> Blocked Groups </th>
@@ -62,7 +43,7 @@ finalgroups length: {{finalGroups.length}}
   <tbody ng-repeat="filter in filters">
     <tr ng-click="filter.selected=!filter.selected">
       <td> {{filter.name}} </td>
-      <td> {{filter.exclude}} </td>
+      <td> {{filter.active}} </td>
       <td> {{filter.field}} </td>
       <td> {{filter.expression}} </td>
       <td> {{filter.groups.length}} </td>

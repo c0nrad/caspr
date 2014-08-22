@@ -4,6 +4,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
+var Filter = mongoose.model('Filter');
 
 var async = require('async');
 var _ = require('underscore');
@@ -35,14 +36,27 @@ router.get('/projects/:id/groups', function(req, res, next) {
       Project.findById(req.params.id, next)
     },
 
-    groupBuckets: ['project', function(next, results) {
+    filters: function(next) {
+      Filter.find({project: req.params.id}, next)
+    },
+
+    groupBuckets: ['project', 'filters', function(next, results) {
       var project = results.project;
+      var filters = results.filters
       
-      return util.aggregateGroups(startDate, endDate, directives, limit, bucket, project._id, next);
+      return util.aggregateGroups(startDate, endDate, directives, limit, bucket, project._id, filters, next);
     }],
 
-    groups: ['groupBuckets', function(next, results) {
+    filteredBuckets: ["groupBuckets", "filters", function(next, results) {
       var groups = results.groupBuckets;
+      var filters = results.filters;
+
+      var filteredGroups = util.filterGroups(filters, groups);
+      return next(null, filteredGroups);
+    }],
+
+    groups: ['groupBuckets', 'filteredBuckets', function(next, results) {
+      var groups = results.filteredBuckets;
 
       for (var i = 0; i < groups.length; ++i) {
         groups[i].data = util.buckets(bucket, startDate, endDate, groups[i].data);

@@ -21,56 +21,6 @@ app.factory('Filter', function($resource) {
   return $resource('/api/filters/:id', {id: '@id'}, {update: {method: 'PUT'}, query: {method: 'GET', isArray: true, url: '/api/projects/:project/filters'}});
 })
 
-app.factory('FilterService', function() {
-  var out = {}
-
-  out.blockedGroupReports = function(filter, groups) {
-    var filteredGroups = [];
-    
-    for (var i = 0; i < groups.length; ++i) {
-      if (out.isMatch(filter, groups[i])) {
-        filteredGroups.push(groups[i]);
-      }
-
-    }
-  	return filteredGroups;
-  }
-
-  out.isMatch = function(filter, group) {
-    var report = group['csp-report'];
-    var expression = filter.expression;
-    var field = filter.field;
-
-    if (expression[0] === "/" && expression[expression.length-1] === "/")
-      expression = expression.substring(1, filter.expression.length - 1)
-
-    if (report[field] !== undefined && report[field] !== null && report[field].match( RegExp(expression) )) {
-      return true;
-    }
-    return false;
-  }
-
-  out.allowedGroups = function(filter, groups) {
-    var filteredGroups = [];
-    
-    for (var i = 0; i < groups.length; ++i) {
-      if (!out.isMatch(filter, groups[i])) {
-        filteredGroups.push(groups[i]);
-      }
-
-    }
-    return filteredGroups;
-  }
-
-  out.countReports = function(groups) {
-    if (groups == undefined || groups.length == 0)
-      return 0
-
-    return _.reduce(groups, function(c, group) { return c + group.count }, 0)
-  }
-
-  return out;
-})
 
 app.service('QueryParams', function() {
   var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true };
@@ -84,7 +34,7 @@ app.service('QueryParams', function() {
   out.bucketSize = "hour";
   out.bucket = 60 * 60; // hour in seconds
   out.limit = 50;
-  out.directives = allDirectiveOn
+  out.directives = allDirectiveOn;
 
   out.allOn = function() {
     out.directives = _.clone(allDirectiveOn);

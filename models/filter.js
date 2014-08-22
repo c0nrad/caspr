@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var FilterSchema = new Schema({
-	exclude: {type: Boolean, default: false },
+	active: {type: Boolean, default: true },
 	field: { type: String, default: "blocked-uri" },
 	expression: {type: String, default: "/^https/" },
 	name: { type: String, default: "HTTPS" },

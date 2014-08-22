@@ -44,6 +44,24 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: 'OverviewController',
     })
 
+    .state('project.analyze', {
+      url: "/analyze",
+      views: {
+        'table': {
+          templateUrl: "views/partials/table.html",
+          controller: "TableController"
+        },
+        'graph': {
+          templateUrl: "views/partials/graph.html",
+          controller: "GraphController"
+        }, 
+        'query': {
+          templateUrl: "views/partials/query.html",
+          controller: "QueryController"
+        }
+      }
+    })
+
     .state('project.query', {
       url: "/query",
       templateUrl: "views/partials/query.html",
@@ -103,7 +121,7 @@ app.controller('OverviewController', function($scope, stats, project) {
   $scope.protocol = window.location.protocol;
 })
 
-app.controller('ProjectController', function($scope, $rootScope, $stateParams, project, stats, FilterService, Filter, Group, QueryParams) {
+app.controller('ProjectController', function($scope, $rootScope, $stateParams, project, stats, Filter, Group, QueryParams) {
   $scope.project = project;
   $scope.stats = stats;
   $scope.groups = []
@@ -119,50 +137,8 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
 
     Group.query(params, function(groups) {
       $scope.groups = groups
-      //$scope.groups = results.groups;
-      //$scope.reportCount = results.reportCount;
-      //$scope.groupCount = results.groupCount;
-
-      $rootScope.$emit('applyFilters');
     });
   })
-
-  $rootScope.$on('loadFilters', function($event) {
-    $scope.filters = Filter.query({project: $stateParams.id}, function() {
-      $rootScope.$emit('applyFilters');
-    })
-  })
-
-  $rootScope.$on('applyFilters', function($event) {
-    var groups = $scope.groups;
-    var filters = $scope.filters;
-    $scope.filteredGroups = []
-
-    if (groups == undefined || filters == undefined)
-      return;
-
-    if (groups.length == 0 || filters.length == 0)
-      return;
-
-    var finalGroups = _.clone(groups);
-    for (var i = 0; i < filters.length; ++i){
-      filters[i].groups = FilterService.blockedGroupReports(filters[i], groups);
-      filters[i].count = FilterService.countReports(filters[i].groups);
-
-     if (filters[i].exclude) {
-        finalGroups = FilterService.allowedGroups(filters[i], finalGroups);
-     }
-    }
-
-    $scope.finalGroups = finalGroups;
-    $scope.finalReportCount = FilterService.countReports(finalGroups);
-    $scope.filteredReportsCount = $scope.reportCount - $scope.finalReportCount;
-
-    $scope.filters = filters;
-  })
-  
-  $rootScope.$emit('loadGroups');
-  $rootScope.$emit('loadFilters');
 
 });
 
@@ -196,10 +172,12 @@ app.controller('TableController', function($scope, QueryParams) {
   };
 })
 
-app.controller('FiltersController', function($scope, $rootScope, Filter, FilterService, $stateParams) {
+app.controller('FiltersController', function($scope, $rootScope, Filter, $stateParams) {
+  $scope.filters = Filter.query({project: $stateParams.id});
 
   function reloadFilters() {
-    $rootScope.$emit('loadFilters');
+    $scope.filters = Filter.query({project: $stateParams.id});
+    $rootScope.$emit('loadGroups');
   }
 
   $scope.addFilter = function() {
@@ -221,7 +199,6 @@ app.controller('FiltersController', function($scope, $rootScope, Filter, FilterS
   }
   
   $scope.filter = new Filter({ project: $stateParams.id, name: "Name", expression: "/expression/", field: "blocked-uri" });
-
 })
 
 app.controller('AnalyticsController', function() {
@@ -242,21 +219,14 @@ app.controller('AnalyticsController', function() {
   }
 })
 
-app.controller('GraphController', function($scope) {
-  $scope.seriesCount = 3;
+app.controller('GraphController', function(QueryParams, $scope, $rootScope) {
   
   $scope.$watch('groups', function(newVal, oldVal) {
     if (newVal == undefined || newVal.length == 0) return;
-    buildTimeSeriesChart(newVal, $scope.seriesCount);
+    buildTimeSeriesChart(newVal, QueryParams.seriesCount);
   });
 
-  $scope.$watch('seriesCount', function(newVal, oldVal) {
-    if (newVal < 0) { $scope.seriesCount = 1; return; }
-    if (newVal == oldVal) {return;}
-    buildTimeSeriesChart($scope.groups, $scope.seriesCount);
-  });
-
-  buildTimeSeriesChart($scope.groups, $scope.seriesCount);
+  buildTimeSeriesChart($scope.groups, QueryParams.seriesCount);
 
   function buildTimeSeriesChart(groups, seriesCount) {
     document.querySelector('#tschart').innerHTML = '';

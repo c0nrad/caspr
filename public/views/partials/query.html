@@ -1,33 +1,18 @@
-<div class="well control-panel">
 
-  <div class="row">
-    <div class="col-md-4">
-      <div class="form-group">
-        <label> Data Range: </label> <br>
-        <div class="btn-group">
-          <button type="button" ng-repeat="period in ['hour', 'day', 'week', 'month']" class="btn btn-default" ng-class="{active: params.range == period}" ng-click="params.setRange(period)"> {{period}} </button>
-        </div>
-      </div>
+<div class="well">
 
-      <div class="form-group">
-        <label> Bucket Size: </label> <br>
-          <div class="btn-group">
-            <button type="button" ng-repeat="b in ['minute', 'hour', 'day']" class="btn btn-default" ng-class="{active: params.bucketSize == b}" ng-click="params.setBucket(b)"> {{b}} </button>
-          </div>
-      </div>
+  <div class="form-group">
+    <label> Data Range: </label> <br>
+    <div class="btn-group">
+      <button type="button" ng-repeat="period in ['hour', 'day', 'week', 'month']" class="btn btn-default" ng-class="{active: params.range == period}" ng-click="params.setRange(period)"> {{period}} </button>
     </div>
+  </div>
 
-    <div class="col-md-8">
-      <div class="form-group">
-        <label> Number of Tabel Elements </label>  
-        <div class="input-group">  
-          <span class="input-group-addon" ng-click="params.limit = params.limit - 25">-</span>
-          <input type="text" class="form-control" ng-model="params.limit">
-          <span class="input-group-addon" ng-click="params.limit = params.limit + 25">+</span>
-        </div>
+  <div class="form-group">
+    <label> Bucket Size: </label> <br>
+      <div class="btn-group">
+        <button type="button" ng-repeat="b in ['minute', 'hour', 'day']" class="btn btn-default" ng-class="{active: params.bucketSize == b}" ng-click="params.setBucket(b)"> {{b}} </button>
       </div>
-
-    </div>
   </div>
 
   <div class="form-group">
@@ -45,6 +30,8 @@
       <label class="checkbox-inline">
         <input type="checkbox" id="inlineCheckbox1" ng-model="params.directives.img"> img
       </label>
+      <br>
+
       <label class="checkbox-inline">
         <input type="checkbox" id="inlineCheckbox2" ng-model="params.directives.font"> font
       </label>
@@ -57,10 +44,33 @@
       <label class="checkbox-inline">
         <input type="checkbox" id="inlineCheckbox3" ng-model="params.directives.object"> object
       </label>
+      <br>
 
       <button class="button-inline btn btn-primary" ng-click="params.allOn()"> All On </button>
       <button class="button-inline btn btn-danger" ng-click="params.allOff()"> All Off </button>
     </div>
   </div>
+
+  <div class="form-group">
+    <label> Group Limit </label>  
+    <div class="input-group">  
+      <span class="input-group-addon" ng-click="params.limit = params.limit - 25">-</span>
+      <input type="text" class="form-control" ng-model="params.limit">
+      <span class="input-group-addon" ng-click="params.limit = params.limit + 25">+</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label> Number of Graph Series: </label>
+    <div class="input-group">
+      <span class="input-group-addon" ng-click="params.seriesCount = params.seriesCount - 1">-</span>
+      <input type="text" class="form-control" ng-model="params.seriesCount">
+      <span class="input-group-addon" ng-click="params.seriesCount = params.seriesCount + 1">+</span>
+    </div>
+  </div>
+
+  <label class="checkbox-inline">
+    <input type="checkbox" id="inlineCheckbox3" ng-model="params.filters"> <strong> Filters On </strong>
+  </label>
 
 </div>
