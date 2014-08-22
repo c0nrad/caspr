@@ -30,20 +30,7 @@ var CSPParser = function(req, res, next) {
         });
 
         req.on('end', function() {
-
-            out = {}
-            csp_report = JSON.parse(data)['csp-report'];
-
-            var keys = _.keys(csp_report);
-
-            for (var i = 0; i < keys.length; ++i) {
-                var key = keys[i];
-                out[key.replace('-', '_')] = csp_report[key];
-            }
-            
             req.body.data = data;
-            req.body.csp_report = out;
-
             next();
         });
     } else {

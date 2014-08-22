@@ -3,7 +3,7 @@ var route = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
-var winston = require('../logger');
+var logger = require('../logger');
 
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
@@ -17,48 +17,73 @@ route.post('/:id', function(req, res) {
     },
 
     report: ['project', function(next, results) {
+
       var project = results.project;
       if (project == undefined)
         return next("Project doesn't exist.");
 
-      if (req.body.csp_report == undefined)
+      if (req.body.data == undefined || req.body.data === "")
         return next('Not a valid report');
 
-      var directive = req.body.csp_report.violated_directive;
-      if (directive !== undefined && directive !== "") {
-        directive = directive.split(' ')[0];
-      }
+      var report = JSON.parse(req.body.data)['csp-report'];
 
-      var e = new Report({
-        ip: req.ip,
+      var r = new Report({
         project: project._id,
         raw: req.body.data,
-        csp_report: req.body.csp_report, 
-        directive: directive
+        'csp-report': report,
+        ip: req.ip,
+        headers: JSON.stringify(req.headers),
+        classification: {
+          directive: getDirective(report),
+          type: getType(report),
+          name: getName(report),
+        }
       })
 
-      e.save(next);
+      r.save(next);
     }],
 
-    updatePolicy: ['project', 'report', function(next, results) {
+    lastSeenPolicy: ['project', 'report', function(next, results) {
       var project = results.project;
       var report = results.report[0];
 
-      if (report.csp_report.original_policy !== "")
-        project.policy = report.csp_report.original_policy;
+      if (report['csp-report']['original-policy'] !== "")
+        project.policy = report['csp-report']['original-policy'];
 
       project.save(next);
     }]
 
   }, function(err, results) {
     if (err) {
-      winston.warn("ERROR - ", err);
-      res.send(err, 400);
-      return
+      logger.error(err);
+      return res.send(err, 400);
     }
 
     res.send('Okay');
   })
 })
+
+function getDirective(report) {
+  var directive = report['violated-directive'];
+  if (directive !== undefined && directive !== "") {
+    directive = directive.split(' ')[0];
+  }
+  return directive;
+}
+
+function getType(report) {
+  var directive = getDirective(report);
+
+  // XXX: Better typing. https://blog.matatall.com/
+  if (report['blocked-uri'] === "" || report['blocked-uri'] === "self") {
+    return 'inline-'+directive.split('-')[0]
+  } else {
+    return "unauthorized-host"
+  }
+}
+
+function getName(report) {
+  return getDirective(report) + " - " + getType(report) + " - " + report['document-uri'] + " - " + report['blocked-uri'];
+}
 
 module.exports = route

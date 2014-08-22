@@ -20,17 +20,27 @@ var ReportSchema = new Schema({
   raw: String,
   directive: String,
 
-  csp_report: {
-    document_uri: String,
-    referrer: String, 
-    blocked_uri: String,
-    violated_directive: String,
-    original_policy: String,
-    source_file: String,
-    line_number: Number,
-    column_number: Number,
-    status_code: Number
+  //stuipid -'s need to be in quotes
+  'csp-report': {
+    'document-uri': String,
+    'referrer': String,
+    'blocked-uri': String,
+    'violated-directive': String,
+    'original-policy': String,
+    'source-file': String,
+    'line-number': Number,
+    'column-number': Number,
+    'status-code': Number,
+    'effective-directive': String
   },
+
+  // Guess work
+  classification: {
+    directive: String,
+    type: String,
+    name: String,
+  }
+
 }, reportOptions)
 
 // XXX: lrn2index

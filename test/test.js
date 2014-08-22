@@ -4,13 +4,14 @@ var async = require('async');
 
 
 var HOST = "http://localhost:3000"
-var PROJECT = { __v: 0, _id: '53f50a80e7f1b6c68e43a6b2', policy: '', hash: '9b83bc59a1d4d211df2d4376a3b6496a9de0d4d02e4b48f138b0d0e254dc9ade', name: 'test1408567936874' }
+//var PROJECT = { __v: 0, _id: '53f50a80e7f1b6c68e43a6b2', policy: '', hash: '9b83bc59a1d4d211df2d4376a3b6496a9de0d4d02e4b48f138b0d0e254dc9ade', name: 'test1408567936874' }
+var PROJECT = undefined
 
 // Create a project
 async.auto({
 
     project: function(next) {
-        if (PROJECT)
+        if (PROJECT != undefined)
             return next(null, PROJECT);
 
         request.post(HOST+"/api/projects", {form: {name: "test" + new Date().getTime() }}, function (error, response, body) {
@@ -29,12 +30,12 @@ async.auto({
         var project = results.project;
         var reports = results.reports;
 
-        console.log("ABC", project.hash);
+        console.log("ABC", project._id);
 
-        var URL = HOST + "/endpoint/" + project.hash;
+        var URL = HOST + "/endpoint/" + project._id;
         for (var i = 0; i < reports.length; ++i) {
             request.post(URL, {headers: {'Content-Type':'application/csp-report'}, body: JSON.stringify(reports[i])}, function(err, response, body) {
-                if (err) return next(error);
+                if (err) return next(err);
             })
         }
         next();
@@ -46,5 +47,5 @@ async.auto({
         console.log(err, results);
     var project = results.project;
     console.log(project);
-    console.log(HOST + "/#/p/" + project.hash);
+    console.log(HOST + "/#/p/" + project._id);
 });
