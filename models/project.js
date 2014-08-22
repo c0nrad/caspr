@@ -6,7 +6,6 @@ var ProjectSchema = new Schema({
   ts: {type: Date, default: Date.now},
   policy: {type: String, default: ""},
 });
-ProjectSchema.index({ hash: 1 }); 
 
 ProjectSchema.pre('save', function(next) {
   if (!this.isNew) return next();
