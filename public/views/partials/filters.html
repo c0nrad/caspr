@@ -1,6 +1,6 @@
 
 <div id="filters" class="well">
-
+<h3> Add Filter </h3>
   <div class="form-inline">
 
     <div class="form-group">
@@ -18,13 +18,7 @@
       <input type="text" class="form-control" ng-model="filter.expression">
     </div>
 
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" ng-model="filter.exclude" ng-true-value="true" ng-false-value="false"> Exclude
-      </label>
-    </div>
-
-    <button type="text" class="btn btn-default" ng-click="addFilter()"> Add Filter </button>
+    <button type="text" class="btn btn-success" ng-click="addFilter()"> Add Filter </button>
   </div>
 </div>
 
@@ -32,25 +26,19 @@
 <table class="table">
   <tr>
     <th> Name </th>
-    <th> Active </th>
     <th> Field </th>
     <th> Expression </th>
-    <th> Blocked Groups </th>
-    <th> Blocked Reports </th>
     <th> Action </th>
   </tr>
 
-  <tbody ng-repeat="filter in filters">
-    <tr ng-click="filter.selected=!filter.selected">
+  <tbody >
+    <tr ng-repeat="filter in filters">
       <td> {{filter.name}} </td>
-      <td> {{filter.active}} </td>
       <td> {{filter.field}} </td>
       <td> {{filter.expression}} </td>
-      <td> {{filter.groups.length}} </td>
-      <td> {{filter.count}} </td>
-      <td> <button class="btn btn-default"> More </button> </td>
+      <td> <a class="btn btn-primary" href="/#/p/{{project._id}}/filter/{{filter._id}}"> More </button> </td>
     </tr>
-    <tr ng-show="filter.selected">
+    <!-- <tr ng-show="filter.selected">
       <td colspan="5">
         <div class="form-inline">
           <div class="form-group">
@@ -65,11 +53,6 @@
             <label> Expression </label>
             <input type="text" class="form-control" ng-model="filter.expression">
           </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" ng-model="filter.exclude" ng-true-value="true" ng-false-value="false"> Exclude
-            </label>
-          </div>
           <button type="text" class="btn btn-default" ng-click="saveFilter($index)"> Save </button>
           <button type="text" class="btn btn-danger" ng-click="deleteFilter($index)"> Delete </button>
         </div>
@@ -77,7 +60,7 @@
 
         <pre> {{filter.groups | reportAndCount | stringify }} </pre>
       </td>
-    </tr>
+    </tr> -->
   </tbody>
 </table>
 

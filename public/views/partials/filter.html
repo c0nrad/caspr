@@ -1,0 +1,60 @@
+
+<div class="row">
+  <div class="col-md-3">
+    <div class="form-horizontal">
+      <div class="form-group">
+        <label> Name </label>
+        <input type="text" class="form-control" ng-model="filter.name">
+      </div>
+      <div class="form-group">
+        <label> Field </label>
+        <input type="text" class="form-control" ng-model="filter.field">
+      </div>
+      <div class="form-group">
+        <label> Expression </label>
+        <input type="text" class="form-control" ng-model="filter.expression">
+      </div>
+      <div class="form-group">
+        <button type="text" class="btn btn-success" ng-click="saveFilter()"> Save </button>
+        <button type="text" class="btn btn-danger" ng-click="deleteFilter()"> Delete </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="well"> 
+          <strong> Reports Blocked: </strong> 
+          <div class="statNumber"> {{filter.count}} </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="well"> 
+          <strong> Unique Reports Blocked: </strong> 
+          <div class="statNumber"> {{filteredGroups.length}} </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div ng-repeat="group in filteredGroups">
+  <pre>Count: {{group.count}}<br/><a href="/#/p/{{project._id}}/group/{{group.reportId}}">View</a><br>{{group['csp-report'] | stringify}} </pre>
+</div>
+
+<div id="chartHolder">
+  <div style="position: absolute; left: 50px" id="legend"></div>
+
+  <div id="chart_container">
+    <div id="y_axis"></div>
+    <div id="tschart"></div>
+  </div>
+
+</div>
+
+<graph series="series"> </graph>
+

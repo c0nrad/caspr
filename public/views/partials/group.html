@@ -1,0 +1,40 @@
+
+<div class="row">
+	<div class="col-md-3">
+		<well>
+		<strong> Classification </strong>
+		{{group.report.classification}}
+
+		<strong> Directive </strong>
+		{{group.report.directive}}
+
+		<br /> <br />
+		</well>
+
+		<div class="well"> 
+			<strong> Reports in Group: </strong> 
+			<div class="statNumber"> {{group.count}} </div>
+		</div>
+
+
+		<div class="well"> 
+			<strong> First Seen (in range): </strong> 
+			<div class="statNumber"> {{group.firstSeen | fromNow }} </div>
+		</div>
+
+
+		<div class="well"> 
+			<strong> Last Seen: </strong> 
+			<div class="statNumber"> {{group.lastSeen | fromNow }} </div>
+		</div>
+
+
+	</div>
+	<div class="col-md-9">
+		<nvd3 options="options" data="data" class="with-3d-shadow with-transitions"></nvd3>
+	</div>
+</div>
+
+
+
+<pre> {{group.report['csp-report'] | stringify }} </pre>

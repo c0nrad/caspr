@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngResource', 'angularCharts', 'ui.router']);
+var app = angular.module('app', ['ngResource', 'angularCharts', 'ui.router', 'nvd3']);
 
 
 app.config(function($stateProvider, $urlRouterProvider) {
@@ -62,6 +62,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
       }
     })
 
+    .state('project.group', {
+      url: "/group/:group",
+      templateUrl: "views/partials/group.html",
+      controller: 'GroupController',
+    })
+
     .state('project.query', {
       url: "/query",
       templateUrl: "views/partials/query.html",
@@ -72,6 +78,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: "/filters", 
       templateUrl: "views/partials/filters.html",
       controller: "FiltersController"
+    })
+
+    .state('project.filter', {
+      url: "/filter/:filter",
+      templateUrl: "views/partials/filter.html",
+      controller: 'FilterController'
     })
 
     .state('project.graph', {
@@ -86,8 +98,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: "TableController"
     })
   }).run(function($rootScope, $state) {
-      $rootScope.$state = $state;
-    });
+  $rootScope.$state = $state;
+});
 
 app.controller('HomeController', function() {});
 
@@ -131,7 +143,7 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
   $scope.filteredCount = 0;
 
   $rootScope.$on('loadGroups', function($event) {
-    params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives");
+    params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives", "filters");
     params.directives =  _.chain(params.directives).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
     params.id = $stateParams.id;
 
@@ -139,8 +151,14 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
       $scope.groups = groups
     });
   })
-
 });
+
+app.controller('GroupController', function($scope, $stateParams, Group, QueryParams, GraphService) {
+  $scope.group = Group.get({id: $scope.project._id, group: $stateParams.group, startDate: QueryParams.startDate, endDate: QueryParams.endDate, bucket: QueryParams.bucket}, function(group) {
+    $scope.data = GraphService.buildSeries([group], QueryParams.seriesCount, QueryParams.startDate, QueryParams.endDate, QueryParams.bucket);
+    $scope.options = GraphService.buildOptions(QueryParams.range)
+  })
+})
 
 app.controller('QueryController', function($scope, QueryParams, $rootScope) {
   $scope.params = QueryParams;
@@ -170,6 +188,31 @@ app.controller('TableController', function($scope, QueryParams) {
 
     return line.substring(0, 47) + '...';
   };
+})
+
+app.controller('FilterController', function(GraphService, $scope, $stateParams, Filter, QueryParams) {
+
+  function loadFilter() {
+    Filter.get({project: $stateParams.id, filter: $stateParams.filter}, function(results) {
+      $scope.filter = results.filter;
+      $scope.filteredGroups = results.filteredGroups
+      $scope.filter.count = _.reduce(results.filteredGroups, function(c, group) { return c + group.count }, 0)
+    
+      //$scope.data = GraphService.buildSeries($scope.filteredGroups, $scope.filteredGroups.length);
+      //$scope.options = GraphService.buildSeries(QueryParams.range)
+    })
+  }
+  loadFilter();
+
+  $scope.saveFilter = function(index) {
+    Filter.update({id: $scope.filter._id}, $scope.filter, function() {
+      loadFilter();
+    });
+  }
+
+  $scope.deleteFilter = function(index) {
+    $scope.filter.$delete({id: $scope.filter._id})
+  }
 })
 
 app.controller('FiltersController', function($scope, $rootScope, Filter, $stateParams) {
@@ -219,72 +262,12 @@ app.controller('AnalyticsController', function() {
   }
 })
 
-app.controller('GraphController', function(QueryParams, $scope, $rootScope) {
+app.controller('GraphController', function(GraphService, QueryParams, $scope, $rootScope) {
   
   $scope.$watch('groups', function(newVal, oldVal) {
     if (newVal == undefined || newVal.length == 0) return;
-    buildTimeSeriesChart(newVal, QueryParams.seriesCount);
+    $scope.data = GraphService.buildSeries(newVal, QueryParams.seriesCount, QueryParams.startDate, QueryParams.endDate, QueryParams.bucket);
+    $scope.options = GraphService.buildOptions(QueryParams.range)
   });
-
-  buildTimeSeriesChart($scope.groups, QueryParams.seriesCount);
-
-  function buildTimeSeriesChart(groups, seriesCount) {
-    document.querySelector('#tschart').innerHTML = '';
-    document.querySelector('#legend').innerHTML = '';
-    document.querySelector('#y_axis').innerHTML = '';
-
-    if (groups == undefined || groups.length == 0)
-      return;
-
-    if (seriesCount <= 0)
-      seriesCount = 1
-     
-    var palette = new Rickshaw.Color.Palette();
-
-    var series = _.chain(groups).first(seriesCount).map(function(group) {
-      return {
-        name: group.name,
-        data: group.data,
-        color: palette.color()
-      };
-    }).value();
-    Rickshaw.Series.zeroFill(series);
-
-    // Start Real Graphing
-    var graph = new Rickshaw.Graph( {
-      height: 540,
-      element: document.querySelector('#tschart'),
-      renderer: 'bar',
-      series: series
-    });
-    
-    var x_axis = new Rickshaw.Graph.Axis.Time({
-      graph: graph,
-      timeFixture: new Rickshaw.Fixtures.Time.Local()
-    });
-    
-    var y_axis = new Rickshaw.Graph.Axis.Y( {
-      graph: graph,
-      orientation: 'left',
-      tickFormat: Rickshaw.Fixtures.Number.formatKMBT,
-      element: document.getElementById('y_axis'),
-    });
-
-    var legend = new Rickshaw.Graph.Legend( {
-      element: document.querySelector('#legend'),
-      graph: graph
-    });
-
-    var highlighter = new Rickshaw.Graph.Behavior.Series.Highlight({
-      graph: graph,
-      legend: legend
-    });
-
-    var shelving = new Rickshaw.Graph.Behavior.Series.Toggle({
-      graph: graph,
-      legend: legend
-    });
-
-    graph.render();
-  }
+  
 });

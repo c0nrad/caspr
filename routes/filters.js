@@ -10,6 +10,8 @@ var async = require('async');
 var baucis = require('baucis');
 var FilterController = baucis.rest('Filter');
 
+var util = require('./util');
+
 router.get('/projects/:id/filters', function(req, res, next) {
 
   async.auto({
@@ -22,9 +24,33 @@ router.get('/projects/:id/filters', function(req, res, next) {
       Filter.find({project: project._id}).exec(next)
     }]
   }, function(err, results) {
-    console.log(err, results);
+    console.log(results);
     res.send(results.filters);
   });
+})
+
+router.get('/projects/:id/filters/:filter', function(req, res, next) {
+  async.auto({
+    project: function(next) {
+      Project.findById(req.params.id, next)
+    },
+
+    filter: function(next) {
+      Filter.findById(req.params.filter, next)
+    },
+
+    filteredGroups: ["filter", "project", function(next, results) {
+      console.log('HERE');
+      var filter = results.filter;
+      var project = results.project;
+
+      return util.aggregateGroups(new Date(0), new Date(), util.allDirectives, 1000, project._id, [filter], false, next);
+    }]
+
+  }, function(err, results) {
+    if (err) return next(err);
+    res.send(results);
+  })
 })
 
 router.use('/', baucis());

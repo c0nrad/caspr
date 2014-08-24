@@ -19,7 +19,9 @@ router.get('/projects/:id/groups', function(req, res, next) {
     startDate: moment().subtract('day', 1).toDate(),
     directives: ["default-src", "script-src", "style-src", "img-src", "font-src", "connect-src", "media-src", "object-src"],
     limit: 50,
-    bucket: 60 * 60
+    bucket: 60 * 60,
+    filters: false,
+    filterExclusion: true
   })
 
   var startDate = new Date( Number(req.query.startDate))
@@ -27,6 +29,8 @@ router.get('/projects/:id/groups', function(req, res, next) {
   var directives = req.query.directives
   var limit = Number(req.query.limit);
   var bucket = Number(req.query.bucket);
+  var doFilter = JSON.parse(req.query.filters);
+  var filterExclusion = JSON.parse(req.query.filterExclusion);
 
   if (!_.isArray(directives))
     directives = [directives];
@@ -42,9 +46,9 @@ router.get('/projects/:id/groups', function(req, res, next) {
 
     groupBuckets: ['project', 'filters', function(next, results) {
       var project = results.project;
-      var filters = results.filters
-      
-      return util.aggregateGroups(startDate, endDate, directives, limit, bucket, project._id, filters, next);
+      var filters = doFilter ? results.filters : []
+
+      return util.aggregateGroups(startDate, endDate, directives, limit, project._id, filters, filterExclusion, next);
     }],
 
     filteredBuckets: ["groupBuckets", "filters", function(next, results) {
@@ -70,5 +74,49 @@ router.get('/projects/:id/groups', function(req, res, next) {
     res.json(results.groups);
   });
 });
+
+router.get('/projects/:id/groups/:report', function(req, res, next) {
+  console.log('hai');
+  async.auto({
+    project: function(next) {
+      Project.findById(req.params.id, next)
+    },
+
+    report: function(next) {
+      Report.findById(req.params.report, next)
+    },
+
+    reports: ["report", function(next, results) {
+      var project = results.project;
+      var report = results.report
+      Report.find({project: project._id, 'raw': report['raw']}, next)
+    }],
+
+    group: ["reports", function(next, results) {
+      console.log('haihaihai');
+      var reports = results.reports;
+      var report = results.report;
+
+      var dates = _.pluck(reports, 'ts')
+
+      var group = {
+        report: reports[0],
+        data: util.buckets(req.query.bucket, req.query.startDate, req.query.endDate, dates),
+        count: reports.length,
+        name: report.name,
+        firstSeen: dates[0],
+        lastSeen: dates[dates.length-1]
+      }
+
+      next(null, group)
+    }]
+
+
+  }, function(err, results) {
+    console.log(err)
+    res.send(results.group);
+  });
+
+})
 
 module.exports = router;

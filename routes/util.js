@@ -3,13 +3,23 @@ var Report = mongoose.model('Report');
 
 var _ = require('underscore');
 
-exports.buckets = function(bucketSize, startDate, endDate, data) {
-  var hist = {};
-  hist[Math.round(startDate/1000)] = 0;
-  hist[Math.round(endDate/1000)] = 0;
-  for (var i = 0 ; i < data.length; ++i) {
+exports.allDirectives = ["default-src", "script-src", "style-src", "img-src", "font-src", "connect-src", "media-src", "object-src"]
 
-    var reportDate = Math.round(data[i].getTime()/1000);
+exports.buckets = function(bucketSize, startDate, endDate, data) {
+  console.log(bucketSize, startDate, endDate, 'hai');
+
+  var hist = {};
+  startDate = Math.round(startDate / 1000);
+  endDate = Math.round(endDate / 1000);
+  bucketSize = Math.round(bucketSize)
+
+  for (var d = startDate; d < endDate; d += bucketSize) {
+    console.log(new Date(d*1000), bucketSize)
+    hist[d] = 0;
+  }
+
+  for (var i = 0 ; i < data.length; ++i) {
+    var reportDate = Math.round(data[i] / 1000);
     reportDate -= (reportDate % bucketSize);
     if (hist[reportDate] === undefined) {
       hist[reportDate] = 0;
@@ -21,15 +31,16 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
   var out = [];
   for (var i = 0; i < keys.length; ++i) {
     var key = keys[i];
-    out.push({x: Number(key), y: hist[key] });
+    out.push({x: Number(key)*1000, y: hist[key] });
   }
+
 
   out = _.sortBy(out, function(a) {return a.x})
 
   return out;
 }
 
-exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket, projectId, filters, next) {
+exports.aggregateGroups = function(startDate, endDate, directives, limit, projectId, filters, filterExclusion, next) {
   var queryMatch = [
     {
       $match: {
@@ -39,13 +50,16 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket
       }
     },
   ]
-  var filterMatch = buildMatchFilters(filters);
+    
+  var filterMatch = buildMatchFilters(filters, filterExclusion);
+  
   var group = [
     {
       $group: {
         _id: "$csp-report",
         count: {$sum: 1},
         'csp-report': {$last: "$csp-report"},
+        reportId: {$last: "$_id"},
         data: { $push: "$ts" },
         latest: { $max: "$ts" },
         directive: {$last: "$directive" },
@@ -58,7 +72,6 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, bucket
   ];
 
   var aggregation = _.reduce([queryMatch, filterMatch, group], function(a, b) { return a.concat(b)}, [])
-  console.log(  JSON.stringify(aggregation, null, 4))
   Report.aggregate(aggregation).exec(next);
 }
 
@@ -67,7 +80,8 @@ exports.filterGroups = function(filters, groups) {
   return groups;
 }
 
-var buildMatchFilters = exports.buildMatchFilters = function(filters) {
+var buildMatchFilters = exports.buildMatchFilters = function(filters, filterExclusion) {
+
   var out = []
   for (var i = 0; i < filters.length; ++i) {
     var filter = filters[i];
@@ -77,18 +91,15 @@ var buildMatchFilters = exports.buildMatchFilters = function(filters) {
       expression = expression.substring(1, filter.expression.length - 1) 
     }
 
-    var exp1 = {}
-    exp1[field] = {'$exists': false}
-    var exp2 = {}
-    exp2[field] = {'$not': RegExp(expression)}
-    var match = {
-      '$match': {
-        '$or': [_.clone(exp1), _.clone(exp2)]
-      }
+    var exp = {}
+    if (filterExclusion) {
+      exp[field] = { '$not': RegExp(expression) }
+    } else {
+      exp[field] = RegExp(expression);
     }
 
     var match = {
-      '$match': exp2
+      '$match': exp
     }
     out.push(match);
   }
