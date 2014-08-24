@@ -19,6 +19,8 @@
     "moment": "~2.8.1",
     "underscore": "~1.6.0",
     "rickshaw": "~1.5.0",
-    "animate.css": "~3.2.0"
+    "animate.css": "~3.2.0",
+    "angular-ui-router": "*",
+    "angular-nvd3": "*"
   }
 }

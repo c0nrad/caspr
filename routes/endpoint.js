@@ -1,5 +1,5 @@
 var express = require('express');
-var route = express.Router();
+var router = express.Router();
 var async = require('async');
 var mongoose = require('mongoose');
 
@@ -8,12 +8,12 @@ var logger = require('../logger');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
 
-route.post('/:id', function(req, res) {
-  var id = req.params.id;
+router.post('/:endpoint', function(req, res) {
+  var endpoint = req.params.endpoint;
 
   async.auto({
     project: function(next) {
-      Project.findById(id).exec(next)
+      Project.findOne({endpoint: endpoint}).exec(next)
     },
 
     report: ['project', function(next, results) {
@@ -84,4 +84,4 @@ function getName(report) {
   return getDirective(report) + " - " + getType(report) + " - " + report['document-uri'] + " - " + report['blocked-uri'];
 }
 
-module.exports = route
+module.exports = router

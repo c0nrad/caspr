@@ -6,15 +6,12 @@ var _ = require('underscore');
 exports.allDirectives = ["default-src", "script-src", "style-src", "img-src", "font-src", "connect-src", "media-src", "object-src"]
 
 exports.buckets = function(bucketSize, startDate, endDate, data) {
-  console.log(bucketSize, startDate, endDate, 'hai');
-
   var hist = {};
   startDate = Math.round(startDate / 1000);
   endDate = Math.round(endDate / 1000);
   bucketSize = Math.round(bucketSize)
 
   for (var d = startDate; d < endDate; d += bucketSize) {
-    console.log(new Date(d*1000), bucketSize)
     hist[d] = 0;
   }
 

@@ -43,7 +43,7 @@
 
 
 <div ng-repeat="group in filteredGroups">
-  <pre>Count: {{group.count}}<br/><a href="/#/p/{{project._id}}/group/{{group.reportId}}">View</a><br>{{group['csp-report'] | stringify}} </pre>
+  <pre>Count: {{group.count}}<br/><a href="/#/p/{{project.hash}}/group/{{group.reportId}}">View</a><br>{{group['csp-report'] | stringify}} </pre>
 </div>
 
 <div id="chartHolder">

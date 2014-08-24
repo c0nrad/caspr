@@ -1,6 +1,5 @@
 var app = angular.module('app', ['ngResource', 'angularCharts', 'ui.router', 'nvd3']);
 
-
 app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise("/");
@@ -17,6 +16,12 @@ app.config(function($stateProvider, $urlRouterProvider) {
       controller: 'ProjectsController'
     })
 
+    .state('new', {
+      url: "/p/new", 
+      templateUrl: "views/partials/newProject.html",
+      controller: 'NewProjectController'
+    })
+
     .state('contact', {
       url: "/contact",
       templateUrl: "views/partials/contact.html",
@@ -24,16 +29,16 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
     .state('project', {
       abstract: true,
-      url: "/p/:id",
+      url: "/p/:hash",
       templateUrl: "views/partials/project.html",
       controller: 'ProjectController',
       resolve: {
         project: function(Project, $stateParams) {
-          return Project.get({id: $stateParams.id})
+          return Project.get({hash: $stateParams.hash})
         },
 
         stats: function(Stats, $stateParams) {
-          return Stats.get({id: $stateParams.id})
+          return Stats.get({hash: $stateParams.hash})
         }
       }
     })
@@ -112,7 +117,8 @@ app.controller('ProjectsController', function(Project, $scope, Stats) {
     out = []
     for (var i = 0; i < projects.length; ++i) {
       var project = projects[i];
-      project.stats = Stats.get({id: project._id})
+      console.log(project.hash);
+      project.stats = Stats.get({hash: project.hash})
       out.push(project);
     }
     $scope.projects = out
@@ -123,7 +129,7 @@ app.controller('NewProjectController', function($scope, Project, $location) {
   $scope.project = new Project({name: ""});
   $scope.save = function() {
     $scope.project.$save(function(project) {
-      $location.url("/p/" + project._id)
+      $location.url("/p/" + project.hash)
     })
   }
 });
@@ -145,7 +151,7 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
   $rootScope.$on('loadGroups', function($event) {
     params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives", "filters");
     params.directives =  _.chain(params.directives).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
-    params.id = $stateParams.id;
+    params.hash = $stateParams.hash;
 
     Group.query(params, function(groups) {
       $scope.groups = groups
@@ -154,7 +160,7 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
 });
 
 app.controller('GroupController', function($scope, $stateParams, Group, QueryParams, GraphService) {
-  $scope.group = Group.get({id: $scope.project._id, group: $stateParams.group, startDate: QueryParams.startDate, endDate: QueryParams.endDate, bucket: QueryParams.bucket}, function(group) {
+  $scope.group = Group.get({hash: $scope.project.hash, group: $stateParams.group, startDate: QueryParams.startDate, endDate: QueryParams.endDate, bucket: QueryParams.bucket}, function(group) {
     $scope.data = GraphService.buildSeries([group], QueryParams.seriesCount, QueryParams.startDate, QueryParams.endDate, QueryParams.bucket);
     $scope.options = GraphService.buildOptions(QueryParams.range)
   })
@@ -193,7 +199,7 @@ app.controller('TableController', function($scope, QueryParams) {
 app.controller('FilterController', function(GraphService, $scope, $stateParams, Filter, QueryParams) {
 
   function loadFilter() {
-    Filter.get({project: $stateParams.id, filter: $stateParams.filter}, function(results) {
+    Filter.get({hash: $scope.project.hash, filter: $stateParams.filter}, function(results) {
       $scope.filter = results.filter;
       $scope.filteredGroups = results.filteredGroups
       $scope.filter.count = _.reduce(results.filteredGroups, function(c, group) { return c + group.count }, 0)
@@ -216,16 +222,16 @@ app.controller('FilterController', function(GraphService, $scope, $stateParams, 
 })
 
 app.controller('FiltersController', function($scope, $rootScope, Filter, $stateParams) {
-  $scope.filters = Filter.query({project: $stateParams.id});
+  $scope.filters = Filter.query({hash: $stateParams.hash});
 
   function reloadFilters() {
-    $scope.filters = Filter.query({project: $stateParams.id});
+    $scope.filters = Filter.query({hash: $stateParams.hash});
     $rootScope.$emit('loadGroups');
   }
 
   $scope.addFilter = function() {
     $scope.filter.$save();
-    $scope.filter = new Filter({ project: $stateParams.id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+    $scope.filter = new Filter({ project: $scope.project._id, name: "Name", expression: "/expression/", field: "blocked-uri" });
     reloadFilters();
   }
 
@@ -240,8 +246,8 @@ app.controller('FiltersController', function($scope, $rootScope, Filter, $stateP
       reloadFilters();
     })
   }
-  
-  $scope.filter = new Filter({ project: $stateParams.id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+  console.log($scope.project._id)
+  $scope.filter = new Filter({ project: $scope.project._id, name: "Name", expression: "/expression/", field: "blocked-uri" });
 })
 
 app.controller('AnalyticsController', function() {

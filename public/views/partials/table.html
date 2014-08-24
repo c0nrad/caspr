@@ -16,7 +16,7 @@
       <td> {{group.directive}} </td>
       <td> <a href="{{group['csp-report']['blocked-uri']}}"> {{urlDisplay(group['csp-report']['blocked-uri'])}} </a> </td>
       <td> <a href="{{group['csp-report']['document-uri']}}"> {{urlDisplay(group['csp-report']['document-uri'])}} </a> </td>
-      <td> <a class="btn btn-primary" href="/#/p/{{project._id}}/group/{{group.reportId}}"> Details </button> </td>
+      <td> <a class="btn btn-primary" href="/#/p/{{project.hash}}/group/{{group.reportId}}"> Details </button> </td>
     </tr>
     <tr ng-show="group.selected" colspan="5">
       <td colspan="5"> <pre> {{ group['csp-report'] | stringify }} </pre> </td>

@@ -27,8 +27,8 @@ router.post('/projects', function(req, res, next) {
   });
 });
 
-router.get('/projects/:id', function(req, res, next) {
-  Project.findById(req.params.id).exec(function(err, project) {
+router.get('/projects/:hash', function(req, res, next) {
+  Project.findOne({hash: req.params.hash}).exec(function(err, project) {
     if (project === null) {
       return next('project doesn\'t exist');
     }
@@ -39,10 +39,10 @@ router.get('/projects/:id', function(req, res, next) {
   });
 });
 
-router.get('/projects/:id/stats', function(req, res) {
+router.get('/projects/:hash/stats', function(req, res) {
   async.auto({
     project: function(next) {
-      Project.findById(req.params.id).exec(next);
+      Project.findOne({hash: req.params.hash}, next)
     },
 
     totalReports: ['project', function(next, results) {

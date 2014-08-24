@@ -2,7 +2,7 @@ var app = angular.module('app');
 
 //Resources
 app.factory('Project', function($resource) {
-  return $resource('/api/projects/:id', {id: '@id'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:id/groups', isArray: true}});
+  return $resource('/api/projects/:hash', {hash: '@hash'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:hash/groups', isArray: true}});
 });
 
 app.factory('Report', function($resource) {
@@ -10,15 +10,15 @@ app.factory('Report', function($resource) {
 });
 
 app.factory('Group', function($resource) {
-  return $resource('/api/projects/:id/groups/:group', {id: '@id'}, {});
+  return $resource('/api/projects/:hash/groups/:group', {hash: 'hash'}, {});
 })
 
 app.factory('Stats', function($resource) {
-  return $resource('/api/projects/:id/stats', {id: '@id'}, {});
+  return $resource('/api/projects/:hash/stats', {}, {});
 })
 
 app.factory('Filter', function($resource) {
-  return $resource('/api/filters/:id', {id: '@id'}, {update: {method: 'PUT'}, get: {method: 'GET', url: '/api/projects/:project/filters/:filter'}, query: {method: 'GET', isArray: true, url: '/api/projects/:project/filters'}});
+  return $resource('/api/filters/:id', {id: '@id'}, {update: {method: 'PUT'}, get: {method: 'GET', url: '/api/projects/:hash/filters/:filter'}, query: {method: 'GET', isArray: true, url: '/api/projects/:hash/filters'}});
 })
 
 app.service('GraphService', function() {

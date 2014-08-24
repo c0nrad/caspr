@@ -12,7 +12,7 @@ var moment = require('moment');
 
 var util = require('./util')
 
-router.get('/projects/:id/groups', function(req, res, next) {
+router.get('/projects/:hash/groups', function(req, res, next) {
 
   req.query = _.defaults(req.query, {
     endDate: new Date(),
@@ -37,12 +37,13 @@ router.get('/projects/:id/groups', function(req, res, next) {
 
   async.auto({
     project: function(next) {
-      Project.findById(req.params.id, next)
+      Project.findOne({hash: req.params.hash}, next)
     },
 
-    filters: function(next) {
-      Filter.find({project: req.params.id}, next)
-    },
+    filters: ['project', function(next, results) {
+      var project = results.project;
+      Filter.find({project: project._id}, next)
+    }],
 
     groupBuckets: ['project', 'filters', function(next, results) {
       var project = results.project;
@@ -75,16 +76,17 @@ router.get('/projects/:id/groups', function(req, res, next) {
   });
 });
 
-router.get('/projects/:id/groups/:report', function(req, res, next) {
+router.get('/projects/:hash/groups/:report', function(req, res, next) {
   console.log('hai');
   async.auto({
     project: function(next) {
-      Project.findById(req.params.id, next)
+      Project.findOne({hash: req.params.hash}, next)
     },
 
-    report: function(next) {
-      Report.findById(req.params.report, next)
-    },
+    report: ['project', function(next, results) {
+      var project = results.project;
+      Report.findOne({_id: req.params.report, project: project._id}, next)
+    }],
 
     reports: ["report", function(next, results) {
       var project = results.project;
@@ -93,7 +95,6 @@ router.get('/projects/:id/groups/:report', function(req, res, next) {
     }],
 
     group: ["reports", function(next, results) {
-      console.log('haihaihai');
       var reports = results.reports;
       var report = results.report;
 

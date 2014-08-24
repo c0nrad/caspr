@@ -12,11 +12,11 @@ var FilterController = baucis.rest('Filter');
 
 var util = require('./util');
 
-router.get('/projects/:id/filters', function(req, res, next) {
+router.get('/projects/:hash/filters', function(req, res, next) {
 
   async.auto({
     project: function(next) {
-      Project.findById(req.params.id, next)
+      Project.findOne({hash: req.params.hash}, next)
     },
 
     filters: ["project", function(next, results) {
@@ -29,10 +29,10 @@ router.get('/projects/:id/filters', function(req, res, next) {
   });
 })
 
-router.get('/projects/:id/filters/:filter', function(req, res, next) {
+router.get('/projects/:hash/filters/:filter', function(req, res, next) {
   async.auto({
     project: function(next) {
-      Project.findById(req.params.id, next)
+      Project.findOne({hash: req.params.hash}, next)
     },
 
     filter: function(next) {
@@ -40,7 +40,6 @@ router.get('/projects/:id/filters/:filter', function(req, res, next) {
     },
 
     filteredGroups: ["filter", "project", function(next, results) {
-      console.log('HERE');
       var filter = results.filter;
       var project = results.project;
 
