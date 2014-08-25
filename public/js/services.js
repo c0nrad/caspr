@@ -24,13 +24,6 @@ app.factory('Filter', function($resource) {
 app.service('GraphService', function() {
   out = {}
 
-// sin.push({x: i, y: Math.sin(i/10)});
-// {
-// values: sin,      //values - represents the array of {x,y} data points
-// key: 'Sine Wave', //key  - the name of the series.
-// color: '#ff7f0e'  //color - optional: choose your own line color.
-// },
-
   out.displayName = function(line) {
     if (line == undefined)
       return "undefined"
@@ -115,13 +108,12 @@ app.service('GraphService', function() {
   return out;
 })
 
-
 app.service('QueryParams', function() {
   var allDirectiveOn = {default: true, script: true, style: true, img: true, font: true, connect: true, media: true, object: true };
   var allDirectiveOff = {default: false, script: false, style: false, img: false, font: false, connect: false, media: false, object: false };
 
   var out = {}
-  out.seriesCount = 3;
+  out.seriesCount = 6;
   out.range = "";
   out.stateDate = new Date();
   out.endDate = new Date();
