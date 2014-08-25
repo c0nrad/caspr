@@ -24,12 +24,14 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
     reportDate -= (reportDate % bucketSize);
 
     // Since we offset startDate and endDate, it's possible we'll ignore
-    if (reportDate < startDate) {
+    if (reportDate < startDate || reportDate > endDate) {
+      console.llog('bad date', reportDate, startDate, endDate);
       continue
     }
 
     if (hist[reportDate] === undefined) {
-      hist[reportDate] = 0;
+      console.log(reportDate, hist, startDate, endDate, data)
+      console.log("THIS IS BAD");
     }
     hist[reportDate] += 1;
   }
