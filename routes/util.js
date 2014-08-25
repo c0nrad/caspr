@@ -11,7 +11,8 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
   endDate = Math.round(endDate / 1000);
   bucketSize = Math.round(bucketSize)
 
-  startDate -= startDate % bucketSize
+  // So, round startDate up, and endDate down. So if day/hour, then only 24 groups with priority on new reports
+  startDate -= (startDate % bucketSize) + bucketSize
   endDate -= endDate % bucketSize
 
   for (var d = startDate; d < endDate; d += bucketSize) {
@@ -21,6 +22,12 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
   for (var i = 0 ; i < data.length; ++i) {
     var reportDate = Math.round(data[i] / 1000);
     reportDate -= (reportDate % bucketSize);
+
+    // Since we offset startDate and endDate, it's possible we'll ignore
+    if (reportDate < startDate) {
+      continue
+    }
+
     if (hist[reportDate] === undefined) {
       hist[reportDate] = 0;
     }
