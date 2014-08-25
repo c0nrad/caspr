@@ -196,7 +196,7 @@ app.controller('TableController', function($scope, QueryParams) {
   };
 })
 
-app.controller('FilterController', function(GraphService, $scope, $stateParams, Filter, QueryParams) {
+app.controller('FilterController', function(GraphService, $scope, $state, $stateParams, Filter, QueryParams) {
 
   function loadFilter() {
     Filter.get({hash: $scope.project.hash, filter: $stateParams.filter}, function(results) {
@@ -210,14 +210,16 @@ app.controller('FilterController', function(GraphService, $scope, $stateParams, 
   }
   loadFilter();
 
-  $scope.saveFilter = function(index) {
+  $scope.saveFilter = function() {
     Filter.update({id: $scope.filter._id}, $scope.filter, function() {
       loadFilter();
     });
   }
 
-  $scope.deleteFilter = function(index) {
-    $scope.filter.$delete({id: $scope.filter._id})
+  $scope.deleteFilter = function() {
+    Filter.delete({id: $scope.filter._id}, function() {
+      $state.go('project.filters')
+    })
   }
 })
 
@@ -246,7 +248,6 @@ app.controller('FiltersController', function($scope, $rootScope, Filter, $stateP
       reloadFilters();
     })
   }
-  console.log($scope.project._id)
   $scope.filter = new Filter({ project: $scope.project._id, name: "Name", expression: "/expression/", field: "blocked-uri" });
 })
 
