@@ -10,7 +10,6 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "angular-charts": "~0.2.4",
     "angular-resource": "~1.2.22",
     "angular": "~1.2.20",
     "angular-route": "~1.2.22",
@@ -18,9 +17,9 @@
     "bootstrap": "~3.2.0",
     "moment": "~2.8.1",
     "underscore": "~1.6.0",
-    "rickshaw": "~1.5.0",
     "animate.css": "~3.2.0",
-    "angular-ui-router": "*",
-    "angular-nvd3": "*"
+    "d3": "~3.4",
+    "angular-ui-router": "~1.2.22",
+    "angular-nvd3": "~0.0.9"
   }
 }
