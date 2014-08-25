@@ -15,7 +15,7 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
   startDate -= (startDate % bucketSize) + bucketSize
   endDate -= endDate % bucketSize
 
-  for (var d = startDate; d < endDate; d += bucketSize) {
+  for (var d = startDate; d <= endDate; d += bucketSize) {
     hist[d] = 0;
   }
 
