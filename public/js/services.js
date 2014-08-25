@@ -22,7 +22,7 @@ app.factory('Filter', function($resource) {
 })
 
 app.service('GraphService', function() {
-  out = {}
+  var out = {}
 
   out.displayName = function(line) {
     if (line == undefined)
@@ -41,7 +41,6 @@ app.service('GraphService', function() {
 
     if (count <= 0)
       count = 1
-     
 
     var series = _.chain(groups).first(count).map(function(group) {
       return {
