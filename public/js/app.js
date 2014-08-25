@@ -149,7 +149,7 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
   $scope.filteredCount = 0;
 
   $rootScope.$on('loadGroups', function($event) {
-    params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives", "filters");
+    params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives", "filters", "seriesCount");
     params.directives =  _.chain(params.directives).pairs().filter(function(a) {return a[1]; }).map(function(a) { return a[0]+"-src"}).value()
     params.hash = $stateParams.hash;
 
