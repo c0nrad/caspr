@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngResource', 'angularCharts', 'ui.router', 'nvd3']);
+var app = angular.module('app', ['ngResource', 'ui.router', 'nvd3']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
