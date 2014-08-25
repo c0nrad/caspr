@@ -21,7 +21,8 @@ router.get('/projects/:hash/groups', function(req, res, next) {
     limit: 50,
     bucket: 60 * 60,
     filters: false,
-    filterExclusion: true
+    filterExclusion: true,
+    seriesCount: 0
   })
 
   var startDate = new Date( Number(req.query.startDate))
@@ -31,6 +32,7 @@ router.get('/projects/:hash/groups', function(req, res, next) {
   var bucket = Number(req.query.bucket);
   var doFilter = JSON.parse(req.query.filters);
   var filterExclusion = JSON.parse(req.query.filterExclusion);
+  var seriesCount = Number(req.query.seriesCount)
 
   if (!_.isArray(directives))
     directives = [directives];
@@ -62,8 +64,12 @@ router.get('/projects/:hash/groups', function(req, res, next) {
 
     groups: ['groupBuckets', 'filteredBuckets', function(next, results) {
       var groups = results.filteredBuckets;
+      var count = groups.length;
 
-      for (var i = 0; i < groups.length; ++i) {
+      if (seriesCount > 0)
+        count = Math.min(seriesCount, count)
+
+      for (var i = 0; i < count; ++i) {
         groups[i].data = util.buckets(bucket, startDate, endDate, groups[i].data);
       }
 
@@ -77,7 +83,6 @@ router.get('/projects/:hash/groups', function(req, res, next) {
 });
 
 router.get('/projects/:hash/groups/:report', function(req, res, next) {
-  console.log('hai');
   async.auto({
     project: function(next) {
       Project.findOne({hash: req.params.hash}, next)
