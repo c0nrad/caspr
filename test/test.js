@@ -4,8 +4,8 @@ var async = require('async');
 
 
 var HOST = "http://localhost:3000"
-var PROJECT = { __v: 0, _id: '53f6b5d711cde30eb23637b6', policy: '', hash: '9b83bc59a1d4d211df2d4376a3b6496a9de0d4d02e4b48f138b0d0e254dc9ade', name: 'test1408567936874' }
-//var PROJECT = undefined
+//var PROJECT = { __v: 0, _id: '53fc9c3b848738830d0f5e71', policy: '', endpoint: '4a3fb09fe90de7d66bd3f92f63b468254ba4ef82119f46bb6869c8e7daee06b5', hash: 'e56782a2a2c80c89653884d76cb367df7a2823726b27b5d44144e9e0999fed84', name: 'test1408567936874' }
+var PROJECT = undefined
 
 // Create a project
 async.auto({
@@ -32,7 +32,7 @@ async.auto({
 
         console.log("ABC", project._id);
 
-        var URL = HOST + "/endpoint/" + project._id;
+        var URL = HOST + "/endpoint/" + project.endpoint;
         for (var i = 0; i < reports.length; ++i) {
             request.post(URL, {headers: {'Content-Type':'application/csp-report'}, body: JSON.stringify(reports[i])}, function(err, response, body) {
                 if (err) return next(err);
