@@ -8,6 +8,8 @@ var logger = require('../logger');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
 
+var url = require('url');
+
 router.post('/:endpoint', function(req, res) {
   var endpoint = req.params.endpoint;
 
@@ -26,13 +28,18 @@ router.post('/:endpoint', function(req, res) {
         return next('Not a valid report');
 
       var report = JSON.parse(req.body.data)['csp-report'];
+      report = sanitizeReport(report);
 
       var r = new Report({
         project: project._id,
-        raw: req.body.data,
-        'csp-report': report,
+
+        original: req.body.data,
         ip: req.ip,
         headers: JSON.stringify(req.headers),
+
+        raw: JSON.stringify(report),
+        'csp-report': report,
+        
         directive: getDirective(report),
         classification: getType(report),
         name: getName(report),
@@ -82,6 +89,34 @@ function getType(report) {
 
 function getName(report) {
   return getDirective(report) + " - " + getType(report) + " - " + report['document-uri'] + " - " + report['blocked-uri'];
+}
+
+function stripQuery(uri) {
+  if (uri == undefined || uri === "")
+    return uri
+  var urlObj = url.parse(uri);
+  urlObj.query = ""
+  urlObj.search = ""
+  urlObj.hash = ""
+  return url.format(urlObj)
+}
+
+function stripPath(uri) {
+  if (uri == undefined || uri === "")
+    return uri
+  var urlObj = url.parse(uri);
+  urlObj.query = ""
+  urlObj.search = ""
+  urlObj.hash = ""
+  urlObj.path = ""
+  urlObj.pathname = ""
+  return url.format(urlObj)
+}
+
+function sanitizeReport(report) {
+  report['document-uri'] = stripQuery(report['document-uri'])
+  report['blocked-uri'] = stripPath(report['blocked-uri'])
+  return report
 }
 
 module.exports = router

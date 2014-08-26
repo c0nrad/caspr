@@ -11,16 +11,21 @@ if (opts.cappedCollectionSize != 0) {
   reportOptions['capped'] = opts.cappedCollectionSize;
 }
 
+// Sanitized Report ->
+// Original Report
+
 var ReportSchema = new Schema({
   project: {type: Schema.Types.ObjectId, ref: 'Project'},
+
   ts: {type: Date, default: Date.now},
 
+  // Original Content
   ip: String,
   headers: String,
-  raw: String,
-  directive: String,
+  original: String,
 
-  //stuipid -'s need to be in quotes
+  //Sanitized reports
+  raw: String,
   'csp-report': {
     'document-uri': String,
     'referrer': String,
@@ -46,7 +51,6 @@ ReportSchema.index({ project: 1 });
 ReportSchema.index({ csp_report: 1 }); 
 ReportSchema.index({ ts: 1 }); 
 ReportSchema.index({ directive: 1 }); 
-
 
 var Report = mongoose.model('Report', ReportSchema);
 
