@@ -4,9 +4,12 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
+var Filter = mongoose.model('Filter')
 
 var async = require('async');
 var _ = require('underscore');
+
+var logger = require('../logger')
 
 router.get('/projects', function(req, res, next) {
   Project.find({}).exec(function(err, projects) {
@@ -38,6 +41,58 @@ router.get('/projects/:hash', function(req, res, next) {
     res.json(project);
   });
 });
+
+router.delete('/projects/:hash/reports', function(req, res, next) {
+  async.auto({
+    project: function(next) {
+      Project.findOne({hash: req.params.hash}, next)
+    },
+
+    clear: ['project', function(next, results) {
+      var project = results.project;
+
+      Report.find({project: project._id}).remove(next)
+    }]
+  }, function(err, results) {
+    if (err) {
+      return next(err)
+    }
+
+    res.send(results)
+  })
+})
+
+router.delete('/projects/:hash', function(req, res, next) {
+  async.auto({
+    project: function(next) {
+      Project.findOne({hash: req.params.hash}, next)
+    },
+
+    deleteReports: ['project', function(next, results){
+      var project = results.project;
+
+      Report.find({project: project._id}).remove(next)
+    }],
+
+    deleteFilters: ['project', function(next, results) {
+      var project = results.project;
+
+      Filter.find({project: project._id}).remove(next);
+    }],
+
+    deleteProject: ['project', function(next, results) {
+      var project = results.project;
+
+      Project.findById(project._id).remove(next);
+    }]
+  }, function(err, results) {
+    if (err) {
+      return next(err)
+    }
+
+    res.send(results);
+  })
+})
 
 router.get('/projects/:hash/stats', function(req, res) {
   async.auto({

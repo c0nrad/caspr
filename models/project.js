@@ -8,7 +8,7 @@ var ProjectSchema = new Schema({
   ts: {type: Date, default: Date.now},
   policy: {type: String, default: ""},
   hash: {type: String},
-  endpoint: {type: String}
+  endpoint: {type: String},
 });
 
 ProjectSchema.pre('save', function(next) {

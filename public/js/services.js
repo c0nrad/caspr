@@ -2,7 +2,7 @@ var app = angular.module('app');
 
 //Resources
 app.factory('Project', function($resource) {
-  return $resource('/api/projects/:hash', {hash: '@hash'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:hash/groups', isArray: true}});
+  return $resource('/api/projects/:hash', {hash: '@hash'}, {update: {method: 'PUT'}, groups: {method: 'GET', url:'/api/projects/:hash/groups', isArray: true}, clear: {method: 'delete', url: '/api/projects/:hash/reports'}});
 });
 
 app.factory('Report', function($resource) {

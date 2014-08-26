@@ -134,12 +134,26 @@ app.controller('NewProjectController', function($scope, Project, $location) {
   }
 });
 
-app.controller('OverviewController', function($scope, stats, project) {
+app.controller('OverviewController', function($scope, $state, $rootScope, stats, project, Project) {
   $scope.host = window.location.host;
   $scope.protocol = window.location.protocol;
+
+  $scope.deleteReports = function() {
+    Project.clear({hash: project.hash}, function(results) {
+      console.log(results);
+      $rootScope.$emit('loadProject');
+    });
+  }
+
+  $scope.deleteProject = function() {
+    Project.delete({hash: project.hash}, function(results) {
+      console.log(results);
+      $state.go('projects');
+    })
+  }
 })
 
-app.controller('ProjectController', function($scope, $rootScope, $stateParams, project, stats, Filter, Group, QueryParams) {
+app.controller('ProjectController', function($scope, $rootScope, $stateParams, project, stats, Project, Filter, Group, Stats, QueryParams) {
   $scope.project = project;
   $scope.stats = stats;
   $scope.groups = []
@@ -147,6 +161,11 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
   $scope.reportCount = 0;
   $scope.groupCount = 0;
   $scope.filteredCount = 0;
+
+  $rootScope.$on('loadProject', function($event) {
+    $scope.project = Project.get({hash: $stateParams.hash})
+    $scope.stats = Stats.get({hash: $stateParams.hash})
+  })
 
   $rootScope.$on('loadGroups', function($event) {
     params = _.pick(QueryParams, "startDate", "endDate", "bucket", "limit", "directives", "filters", "seriesCount");
