@@ -42,26 +42,6 @@ router.get('/projects/:hash', function(req, res, next) {
   });
 });
 
-router.delete('/projects/:hash/reports', function(req, res, next) {
-  async.auto({
-    project: function(next) {
-      Project.findOne({hash: req.params.hash}, next)
-    },
-
-    clear: ['project', function(next, results) {
-      var project = results.project;
-
-      Report.find({project: project._id}).remove(next)
-    }]
-  }, function(err, results) {
-    if (err) {
-      return next(err)
-    }
-
-    res.send(results)
-  })
-})
-
 router.delete('/projects/:hash', function(req, res, next) {
   async.auto({
     project: function(next) {
