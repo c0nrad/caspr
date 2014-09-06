@@ -9,10 +9,6 @@ var Project = mongoose.model('Project');
 
 var async = require('async');
 var _ = require('underscore');
-
-var baucis = require('baucis');
-var FilterController = baucis.rest('Filter');
-
 var util = require('./util');
 
 router.post('/projects/:hash/filters', function(req, res, next) {
