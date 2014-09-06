@@ -34,12 +34,13 @@ router.get('/projects/:hash/groups', function(req, res, next) {
   var filterExclusion = JSON.parse(req.query.filterExclusion);
   var seriesCount = Number(req.query.seriesCount)
 
-  if (!_.isArray(directives))
+  if (!_.isArray(directives)) {
     directives = [directives];
+  }
 
   async.auto({
     project: function(next) {
-      Project.findOne({hash: req.params.hash}, next)
+      Project.findOne({hash: req.params.hash}, next);
     },
 
     filters: ['project', function(next, results) {
@@ -47,12 +48,12 @@ router.get('/projects/:hash/groups', function(req, res, next) {
       if (!project) {
         return next('project does not exist');
       }
-      Filter.find({project: project._id}, next)
+      Filter.find({project: project._id}, next);
     }],
 
     groupBuckets: ['project', 'filters', function(next, results) {
       var project = results.project;
-      var filters = doFilter ? results.filters : []
+      var filters = doFilter ? results.filters : [];
 
       return util.aggregateGroups(startDate, endDate, directives, limit, project._id, filters, filterExclusion, next);
     }],

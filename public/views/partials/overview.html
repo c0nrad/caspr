@@ -4,7 +4,7 @@
       <div class="col-md-3">
         <img src="/img/happy.png" width="100%"> </img>
       </div>
-      <div class="col-md-9"> 
+      <div class="col-md-9">
         <p> Please add the following header to your website: </p>
         <pre>Content-Security-Header: default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; font-src 'self'; report-uri {{protocol}}//{{host}}/endpoint/{{project.endpoint}} </pre>
       </div>
@@ -16,7 +16,7 @@
       <div class="col-md-3">
         <img src="/img/happy.png" width="100%"> </img>
       </div>
-      <div class="col-md-9"> 
+      <div class="col-md-9">
         <strong> Last Seen Policy </strong>
         <pre>{{project.policy}}</pre>
 
@@ -30,14 +30,14 @@
 
 <div class="row">
   <div class="col-md-3">
-    <div class="well"> 
-      <strong> Total Reports: </strong> 
+    <div class="well">
+      <strong> Total Reports: </strong>
       <div class="statNumber"> {{stats.totalReports}} </div>
     </div>
   </div>
   <div class="col-md-3">
-    <div class="well"> 
-      <strong> Total Unique Reports: </strong> 
+    <div class="well">
+      <strong> Total Unique Reports: </strong>
       <div class="statNumber"> {{stats.uniqueReportsTotal}} </div>
     </div>
   </div>
@@ -74,24 +74,29 @@
 
   <div class="col-md-6">
     <h3> Settings </h3>
+    <label>
+      <input type="checkbox" ng-model="project.hidden" ng-change="project.$update()"> Hide Project
+    </label>
+    <br />
+
     <button ng-click="deleteReports()" class="btn btn-danger"> Delete all reports </button>
     <br />
     <button ng-click="deleteProject()" class="btn btn-danger"> Delete Project </button>
   </div>
 </div>
 
-<!-- 
- <div class="well"> 
-        <strong> Reports: </strong> 
+<!--
+ <div class="well">
+        <strong> Reports: </strong>
         <div class="statNumber"> {{stats.reportCount}} </div>
       </div>
 
-     
 
-      <div class="well"> 
-        <strong> Unique Reports: </strong> 
+
+      <div class="well">
+        <strong> Unique Reports: </strong>
         <div class="statNumber"> {{stats.groupCount}} </div>
       </div>
 
-     
+
     </div> -->

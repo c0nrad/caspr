@@ -1,32 +1,51 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 
 var mongoose = require('mongoose');
 var Project = mongoose.model('Project');
 var Report = mongoose.model('Report');
-var Filter = mongoose.model('Filter')
+var Filter = mongoose.model('Filter');
 
 var async = require('async');
 var _ = require('underscore');
 
-var logger = require('../logger')
-
 router.get('/projects', function(req, res, next) {
-  Project.find({}).exec(function(err, projects) {
-    if (err) return next(err);
+  Project.find({hidden: false}).exec(function(err, projects) {
+    if (err) {
+      return next(err);
+    }
 
-    res.json(projects)
+    res.json(projects);
   });
 });
 
 router.post('/projects', function(req, res, next) {
-  req.body = _.pick(req.body, 'name')
-  p = new Project(req.body);
+  req.body = _.pick(req.body, 'name');
+  var p = new Project(req.body);
 
   p.save(function(err, project) {
-    if (err) return next(err);
+    if (err) {
+      return next(err);
+    }
 
     res.json(project);
+  });
+});
+
+router.put('/projects/:hash', function(req, res, next) {
+  var params = _.pick(req.body, 'name', 'hidden');
+  Project.findOne({hash: req.params.hash}).exec(function(err, project) {
+    if (!project) {
+      return next('project does not exist');
+    }
+    _.extend(project, params);
+    project.save(function(err, results) {
+      if (err) {
+        res.send(results);
+      }
+    });
   });
 });
 
@@ -36,7 +55,9 @@ router.get('/projects/:hash', function(req, res, next) {
       return next('project doesn\'t exist');
     }
 
-    if (err) return next(err);
+    if (err) {
+      return next(err);
+    }
 
     res.json(project);
   });
@@ -45,13 +66,13 @@ router.get('/projects/:hash', function(req, res, next) {
 router.delete('/projects/:hash', function(req, res, next) {
   async.auto({
     project: function(next) {
-      Project.findOne({hash: req.params.hash}, next)
+      Project.findOne({hash: req.params.hash}, next);
     },
 
     deleteReports: ['project', function(next, results){
       var project = results.project;
 
-      Report.find({project: project._id}).remove(next)
+      Report.find({project: project._id}).remove(next);
     }],
 
     deleteFilters: ['project', function(next, results) {
@@ -67,12 +88,12 @@ router.delete('/projects/:hash', function(req, res, next) {
     }]
   }, function(err, results) {
     if (err) {
-      return next(err)
+      return next(err);
     }
 
     res.send(results);
-  })
-})
+  });
+});
 
 router.get('/projects/:hash/stats', function(req, res) {
   async.auto({
