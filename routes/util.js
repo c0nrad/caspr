@@ -66,7 +66,7 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, projec
   var group = [
     {
       $group: {
-        _id: '$csp-report',
+        _id: '$raw',
         count: {$sum: 1},
         'csp-report': {$last: '$csp-report'},
         reportId: {$last: '$_id'},

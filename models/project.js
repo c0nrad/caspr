@@ -14,6 +14,10 @@ var ProjectSchema = new Schema({
   hidden: {type: Boolean, default: true}
 });
 
+ProjectSchema.index({ hash: 1 });
+ProjectSchema.index({ endpoint: 1 });
+ProjectSchema.index({ hidden: 1 });
+
 ProjectSchema.pre('save', function(next) {
   if (!this.isNew) {
     return next();

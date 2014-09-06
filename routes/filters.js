@@ -50,7 +50,7 @@ router.post('/projects/:hash/filters', function(req, res, next) {
 });
 
 router.put('/projects/:hash/filters/:filter', function(req, res, next) {
-  var params = _.pick(req.query, 'active', 'field', 'expression', 'name');
+  var params = _.pick(req.body, 'active', 'field', 'expression', 'name');
 
   async.auto({
     project: function(next) {
@@ -63,7 +63,7 @@ router.put('/projects/:hash/filters/:filter', function(req, res, next) {
         return next('not a valid project');
       }
 
-      Filter.update({id: req.params.filter}, {$set: params}, next);
+      Filter.findByIdAndUpdate(req.params.filter, {$set: params}, next);
     }]
   }, function(err, results) {
     if (err) {
@@ -73,6 +73,31 @@ router.put('/projects/:hash/filters/:filter', function(req, res, next) {
     res.send(results.filter);
   });
 });
+
+router.delete('/projects/:hash/filters/:filter', function(req, res, next) {
+
+  async.auto({
+    project: function(next) {
+      Project.findOne({hash: req.params.hash}, next);
+    },
+
+    filter: ['project', function(next, results) {
+      var project = results.project;
+      if (!project) {
+        return next('not a valid project');
+      }
+
+      Filter.findById(req.params.filter).remove(next);
+    }]
+  }, function(err, results) {
+    if (err) {
+      return next(err);
+    }
+
+    res.send('okay');
+  });
+});
+
 
 router.get('/projects/:hash/filters', function(req, res, next) {
 
@@ -130,7 +155,5 @@ router.get('/projects/:hash/filters/:filter', function(req, res, next) {
     res.send(results);
   });
 });
-
-router.use('/', baucis());
 
 module.exports = router;

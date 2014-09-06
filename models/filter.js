@@ -11,4 +11,6 @@ var FilterSchema = new Schema({
 	project: {type: Schema.Types.ObjectId, ref: 'Project' }
 });
 
+FilterSchema.index({ project: 1 });
+
 module.exports = mongoose.model('Filter', FilterSchema);

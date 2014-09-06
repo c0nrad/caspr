@@ -141,7 +141,7 @@ router.get('/projects/:hash/stats', function(req, res, next) {
         },
         {
           $group: {
-            _id: '$csp-report',
+            _id: '$raw',
           }
         }
       ]).exec(function(err, groups) {
@@ -151,7 +151,7 @@ router.get('/projects/:hash/stats', function(req, res, next) {
 
     dateLastActivity: ['project', function(next, results) {
       var project = results.project;
-      Report.findById(project._id, 'ts').sort({ts: -1}).limit(1).exec(function(err, results) {
+      Report.find({project: project._id}, 'ts').sort({ts: -1}).limit(1).exec(function(err, results) {
         if (results.length === 0) {
           return next(err);
         }
@@ -162,7 +162,7 @@ router.get('/projects/:hash/stats', function(req, res, next) {
     if (err) {
       return next(err);
     }
-    
+
     res.send(results);
   });
 });
