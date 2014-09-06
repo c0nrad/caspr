@@ -215,10 +215,10 @@ app.controller('TableController', function($scope, QueryParams) {
   };
 })
 
-app.controller('FilterController', function(GraphService, $scope, $state, $stateParams, Filter, QueryParams) {
+app.controller('FilterController', function(GraphService, $scope, $state, $stateParams, Filter, QueryParams, project) {
 
   function loadFilter() {
-    Filter.get({hash: $scope.project.hash, filter: $stateParams.filter}, function(results) {
+    Filter.get({hash: $scope.project.hash, id: $stateParams.filter}, function(results) {
       $scope.filter = results.filter;
       $scope.filteredGroups = results.filteredGroups
       $scope.filter.count = _.reduce(results.filteredGroups, function(c, group) { return c + group.count }, 0)
@@ -230,20 +230,20 @@ app.controller('FilterController', function(GraphService, $scope, $state, $state
   loadFilter();
 
   $scope.saveFilter = function() {
-    Filter.update({id: $scope.filter._id}, $scope.filter, function() {
+    Filter.update({hash: project.hash, id: $scope.filter._id}, $scope.filter, function() {
       loadFilter();
     });
   }
 
   $scope.deleteFilter = function() {
-    Filter.delete({id: $scope.filter._id}, function() {
+    Filter.delete({hash: project.hash, id: $scope.filter._id}, function() {
       $state.go('project.filters')
     })
   }
 })
 
-app.controller('FiltersController', function($scope, $rootScope, Filter, $stateParams) {
-  $scope.filters = Filter.query({hash: $stateParams.hash});
+app.controller('FiltersController', function($scope, $rootScope, Filter, $stateParams, project) {
+  $scope.filters = Filter.query({hash: project.hash});
 
   function reloadFilters() {
     $scope.filters = Filter.query({hash: $stateParams.hash});
@@ -252,22 +252,22 @@ app.controller('FiltersController', function($scope, $rootScope, Filter, $stateP
 
   $scope.addFilter = function() {
     $scope.filter.$save();
-    $scope.filter = new Filter({ project: $scope.project._id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+    $scope.filter = new Filter({hash: project.hash, name: "Name", expression: "/expression/", field: "blocked-uri" });
     reloadFilters();
   }
 
   $scope.saveFilter = function(index) {
-    $scope.filters[index].$update({id: $scope.filters[index]._id}, function() {
+    $scope.filters[index].$update({hash: project.hash, id: $scope.filters[index]._id}, function() {
       reloadFilters();
     })
   }
 
   $scope.deleteFilter = function(index) {
-    $scope.filters[index].$delete({id: $scope.filters[index]._id}, function() {
+    $scope.filters[index].$delete({hash: project.hash, id: $scope.filters[index]._id}, function() {
       reloadFilters();
     })
   }
-  $scope.filter = new Filter({ project: $scope.project._id, name: "Name", expression: "/expression/", field: "blocked-uri" });
+  $scope.filter = new Filter({ hash: project.hash, name: "Name", expression: "/expression/", field: "blocked-uri" });
 })
 
 app.controller('AnalyticsController', function() {

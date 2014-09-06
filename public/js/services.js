@@ -18,7 +18,7 @@ app.factory('Stats', function($resource) {
 })
 
 app.factory('Filter', function($resource) {
-  return $resource('/api/filters/:id', {id: '@id'}, {update: {method: 'PUT'}, get: {method: 'GET', url: '/api/projects/:hash/filters/:filter'}, query: {method: 'GET', isArray: true, url: '/api/projects/:hash/filters'}});
+  return $resource('/api/projects/:hash/filters/:id', {id: '@id', hash: '@hash'}, {update: {method: 'PUT'}});
 })
 
 app.service('GraphService', function() {

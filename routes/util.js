@@ -25,7 +25,6 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
 
     // Since we offset startDate and endDate, it's possible we'll ignore
     if (reportDate < startDate || reportDate > endDate) {
-      console.llog('bad date', reportDate, startDate, endDate);
       continue
     }
 

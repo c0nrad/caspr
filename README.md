@@ -1,7 +1,13 @@
 # Caspr
 
-Content Security Policy Report Aggregator
+Caspr is a Content-Security-Policy report endpoint and aggregator. 
 
+It contains three parts:
+1. The Content-Security-Report report endpoint for collecing reports
+2. A RESTful API for interacting / downloading reports
+3. A web app for analyzing reports
+
+An example of all three can be seen at:
 https://caspr.io
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/c0nrad/caspr)

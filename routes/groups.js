@@ -44,6 +44,9 @@ router.get('/projects/:hash/groups', function(req, res, next) {
 
     filters: ['project', function(next, results) {
       var project = results.project;
+      if (!project) {
+        return next('project does not exist');
+      }
       Filter.find({project: project._id}, next)
     }],
 

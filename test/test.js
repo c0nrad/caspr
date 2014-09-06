@@ -4,8 +4,8 @@ var async = require('async');
 
 
 var HOST = "http://localhost:3000"
-//var PROJECT = { __v: 0, _id: '53fc9c3b848738830d0f5e71', policy: '', endpoint: '4a3fb09fe90de7d66bd3f92f63b468254ba4ef82119f46bb6869c8e7daee06b5', hash: 'e56782a2a2c80c89653884d76cb367df7a2823726b27b5d44144e9e0999fed84', name: 'test1408567936874' }
-var PROJECT = undefined
+var PROJECT = { __v: 0, _id: '53fc9c3b848738830d0f5e71', policy: '', endpoint: '01c81cea5545f92176e31baa27d1516504acfc0ab3af618f1d836b1ae664131e', hash: 'e56782a2a2c80c89653884d76cb367df7a2823726b27b5d44144e9e0999fed84', name: 'test1408567936874' }
+//var PROJECT = undefined
 
 // Create a project
 async.auto({
