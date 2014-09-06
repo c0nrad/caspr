@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 
@@ -10,29 +12,29 @@ var async = require('async');
 var _ = require('underscore');
 var moment = require('moment');
 
-var util = require('./util')
+var util = require('./util');
 
 router.get('/projects/:hash/groups', function(req, res, next) {
 
   req.query = _.defaults(req.query, {
     endDate: new Date(),
     startDate: moment().subtract('day', 1).toDate(),
-    directives: ["default-src", "script-src", "style-src", "img-src", "font-src", "connect-src", "media-src", "object-src"],
+    directives: ['default-src', 'script-src', 'style-src', 'img-src', 'font-src', 'connect-src', 'media-src', 'object-src'],
     limit: 50,
     bucket: 60 * 60,
     filters: false,
     filterExclusion: true,
     seriesCount: 0
-  })
+  });
 
-  var startDate = new Date( Number(req.query.startDate))
-  var endDate = new Date( Number(req.query.endDate))
-  var directives = req.query.directives
+  var startDate = new Date( Number(req.query.startDate));
+  var endDate = new Date( Number(req.query.endDate));
+  var directives = req.query.directives;
   var limit = Number(req.query.limit);
   var bucket = Number(req.query.bucket);
   var doFilter = JSON.parse(req.query.filters);
   var filterExclusion = JSON.parse(req.query.filterExclusion);
-  var seriesCount = Number(req.query.seriesCount)
+  var seriesCount = Number(req.query.seriesCount);
 
   if (!_.isArray(directives)) {
     directives = [directives];
@@ -58,7 +60,7 @@ router.get('/projects/:hash/groups', function(req, res, next) {
       return util.aggregateGroups(startDate, endDate, directives, limit, project._id, filters, filterExclusion, next);
     }],
 
-    filteredBuckets: ["groupBuckets", "filters", function(next, results) {
+    filteredBuckets: ['groupBuckets', 'filters', function(next, results) {
       var groups = results.groupBuckets;
       var filters = results.filters;
 
@@ -70,8 +72,9 @@ router.get('/projects/:hash/groups', function(req, res, next) {
       var groups = results.filteredBuckets;
       var count = groups.length;
 
-      if (seriesCount > 0)
-        count = Math.min(seriesCount, count)
+      if (seriesCount > 0) {
+        count = Math.min(seriesCount, count);
+      }
 
       for (var i = 0; i < count; ++i) {
         groups[i].data = util.buckets(bucket, startDate, endDate, groups[i].data);
@@ -81,7 +84,10 @@ router.get('/projects/:hash/groups', function(req, res, next) {
     }]
 
   }, function(err, results) {
-    if (err) return next(err);
+    if (err) {
+      return next(err);
+    }
+
     res.json(results.groups);
   });
 });
@@ -89,25 +95,28 @@ router.get('/projects/:hash/groups', function(req, res, next) {
 router.get('/projects/:hash/groups/:report', function(req, res, next) {
   async.auto({
     project: function(next) {
-      Project.findOne({hash: req.params.hash}, next)
+      Project.findOne({hash: req.params.hash}, next);
     },
 
     report: ['project', function(next, results) {
       var project = results.project;
-      Report.findOne({_id: req.params.report, project: project._id}, next)
+      if (!project) {
+        return next('not a valid project');
+      }
+      Report.findOne({_id: req.params.report, project: project._id}, next);
     }],
 
-    reports: ["report", function(next, results) {
+    reports: ['report', function(next, results) {
       var project = results.project;
-      var report = results.report
-      Report.find({project: project._id, 'raw': report['raw']}, next)
+      var report = results.report;
+      Report.find({project: project._id, 'raw': report.raw}, next);
     }],
 
-    group: ["reports", function(next, results) {
+    group: ['reports', function(next, results) {
       var reports = results.reports;
       var report = results.report;
 
-      var dates = _.pluck(reports, 'ts')
+      var dates = _.pluck(reports, 'ts');
 
       var group = {
         report: reports[0],
@@ -116,17 +125,17 @@ router.get('/projects/:hash/groups/:report', function(req, res, next) {
         name: report.name,
         firstSeen: dates[0],
         lastSeen: dates[dates.length-1]
-      }
+      };
 
-      next(null, group)
+      next(null, group);
     }]
-
-
   }, function(err, results) {
-    console.log(err)
+    if (err) {
+      return next(err);
+    }
+
     res.send(results.group);
   });
-
-})
+});
 
 module.exports = router;

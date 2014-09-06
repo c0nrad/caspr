@@ -1,19 +1,21 @@
+'use strict';
+
 var mongoose = require('mongoose');
 var Report = mongoose.model('Report');
 
 var _ = require('underscore');
 
-exports.allDirectives = ["default-src", "script-src", "style-src", "img-src", "font-src", "connect-src", "media-src", "object-src"]
+exports.allDirectives = ['default-src', 'script-src', 'style-src', 'img-src', 'font-src', 'connect-src', 'media-src', 'object-src']
 
 exports.buckets = function(bucketSize, startDate, endDate, data) {
   var hist = {};
   startDate = Math.round(startDate / 1000);
   endDate = Math.round(endDate / 1000);
-  bucketSize = Math.round(bucketSize)
+  bucketSize = Math.round(bucketSize);
 
   // So, round startDate up, and endDate down. So if day/hour, then only 24 groups with priority on new reports
-  startDate -= (startDate % bucketSize) + bucketSize
-  endDate -= endDate % bucketSize
+  startDate -= (startDate % bucketSize) + bucketSize;
+  endDate -= endDate % bucketSize;
 
   for (var d = startDate; d <= endDate; d += bucketSize) {
     hist[d] = 0;
@@ -25,28 +27,28 @@ exports.buckets = function(bucketSize, startDate, endDate, data) {
 
     // Since we offset startDate and endDate, it's possible we'll ignore
     if (reportDate < startDate || reportDate > endDate) {
-      continue
+      continue;
     }
 
     if (hist[reportDate] === undefined) {
-      console.log(reportDate, hist, startDate, endDate, data)
-      console.log("THIS IS BAD");
+      console.log(reportDate, hist, startDate, endDate, data);
+      console.error('THIS IS BAD');
     }
     hist[reportDate] += 1;
   }
 
   var keys = _.keys(hist);
   var out = [];
-  for (var i = 0; i < keys.length; ++i) {
-    var key = keys[i];
+  for (var j = 0; j < keys.length; ++j) {
+    var key = keys[j];
     out.push({x: Number(key)*1000, y: hist[key] });
   }
 
 
-  out = _.sortBy(out, function(a) {return a.x})
+  out = _.sortBy(out, function(a) {return a.x; });
 
   return out;
-}
+};
 
 exports.aggregateGroups = function(startDate, endDate, directives, limit, projectId, filters, filterExclusion, next) {
   var queryMatch = [
@@ -57,59 +59,60 @@ exports.aggregateGroups = function(startDate, endDate, directives, limit, projec
         directive: {$in: directives}
       }
     },
-  ]
-    
+  ];
+
   var filterMatch = buildMatchFilters(filters, filterExclusion);
-  
+
   var group = [
     {
       $group: {
-        _id: "$csp-report",
+        _id: '$csp-report',
         count: {$sum: 1},
-        'csp-report': {$last: "$csp-report"},
-        reportId: {$last: "$_id"},
-        data: { $push: "$ts" },
-        latest: { $max: "$ts" },
-        directive: {$last: "$directive" },
-        classification: {$last: "$classification" },
-        name: {$last: "$name" },
-      } 
+        'csp-report': {$last: '$csp-report'},
+        reportId: {$last: '$_id'},
+        data: { $push: '$ts' },
+        latest: { $max: '$ts' },
+        directive: {$last: '$directive' },
+        classification: {$last: '$classification' },
+        name: {$last: '$name' },
+      }
     },
     { $sort : { count: -1 } },
     { $limit: limit }
   ];
 
-  var aggregation = _.reduce([queryMatch, filterMatch, group], function(a, b) { return a.concat(b)}, [])
+  var aggregation = _.reduce([queryMatch, filterMatch, group], function(a, b) { return a.concat(b); }, []);
   Report.aggregate(aggregation).exec(next);
-}
+};
 
 exports.filterGroups = function(filters, groups) {
   buildMatchFilters(filters);
   return groups;
-}
+};
 
 var buildMatchFilters = exports.buildMatchFilters = function(filters, filterExclusion) {
 
-  var out = []
+  var out = [];
   for (var i = 0; i < filters.length; ++i) {
     var filter = filters[i];
     var expression = filter.expression;
     var field = 'csp-report.' + filter.field;
-    if (expression[0] === "/" && expression[expression.length-1] === "/") {
-      expression = expression.substring(1, filter.expression.length - 1) 
+    if (expression[0] === '/' && expression[expression.length-1] === '/') {
+      expression = expression.substring(1, filter.expression.length - 1);
     }
 
-    var exp = {}
+    var exp = {};
     if (filterExclusion) {
-      exp[field] = { '$not': RegExp(expression) }
+      exp[field] = { '$not': new RegExp(expression) };
     } else {
-      exp[field] = RegExp(expression);
+      exp[field] = new RegExp(expression);
     }
 
     var match = {
       '$match': exp
-    }
+    };
+
     out.push(match);
   }
   return out;
-}
+};

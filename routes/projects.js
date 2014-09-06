@@ -22,7 +22,7 @@ router.get('/projects', function(req, res, next) {
 });
 
 router.post('/projects', function(req, res, next) {
-  req.body = _.pick(req.body, 'name');
+  req.body = _.pick(req.body, 'name', 'hidden');
   var p = new Project(req.body);
 
   p.save(function(err, project) {
@@ -39,6 +39,10 @@ router.put('/projects/:hash', function(req, res, next) {
   Project.findOne({hash: req.params.hash}).exec(function(err, project) {
     if (!project) {
       return next('project does not exist');
+    }
+
+    if (err) {
+      return next(err);
     }
     _.extend(project, params);
     project.save(function(err, results) {
@@ -66,7 +70,17 @@ router.get('/projects/:hash', function(req, res, next) {
 router.delete('/projects/:hash', function(req, res, next) {
   async.auto({
     project: function(next) {
-      Project.findOne({hash: req.params.hash}, next);
+      Project.findOne({hash: req.params.hash}, function(err, project) {
+        if (err) {
+          return next(err);
+        }
+
+        if (!project) {
+          return next('not a valid project');
+        }
+
+        return next(err, project);
+      });
     },
 
     deleteReports: ['project', function(next, results){
@@ -86,19 +100,29 @@ router.delete('/projects/:hash', function(req, res, next) {
 
       Project.findById(project._id).remove(next);
     }]
-  }, function(err, results) {
+  }, function(err) {
     if (err) {
       return next(err);
     }
 
-    res.send(results);
+    res.send('okay');
   });
 });
 
-router.get('/projects/:hash/stats', function(req, res) {
+router.get('/projects/:hash/stats', function(req, res, next) {
   async.auto({
     project: function(next) {
-      Project.findOne({hash: req.params.hash}, next)
+      Project.findOne({hash: req.params.hash}, function(err, project) {
+        if (err) {
+          return next(err);
+        }
+
+        if (!project) {
+          return next('not a valid project');
+        }
+
+        return next(err, project);
+      });
     },
 
     totalReports: ['project', function(next, results) {
@@ -117,7 +141,7 @@ router.get('/projects/:hash/stats', function(req, res) {
         },
         {
           $group: {
-            _id: "$csp-report",
+            _id: '$csp-report',
           }
         }
       ]).exec(function(err, groups) {
@@ -127,12 +151,18 @@ router.get('/projects/:hash/stats', function(req, res) {
 
     dateLastActivity: ['project', function(next, results) {
       var project = results.project;
-      Report.find({project: project._id}, "ts").sort({ts: -1}).limit(1).exec(function(err, results) {
-        if (results.length == 0) return next(err, 0);
+      Report.findById(project._id, 'ts').sort({ts: -1}).limit(1).exec(function(err, results) {
+        if (results.length === 0) {
+          return next(err);
+        }
         next(err, results[0].ts);
-      })
+      });
     }]
   }, function(err, results) {
+    if (err) {
+      return next(err);
+    }
+    
     res.send(results);
   });
 });

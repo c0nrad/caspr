@@ -5,14 +5,11 @@ var logger = require('../logger');
 
 var opts = require('../options');
 
-reportOptions = {}
-if (opts.cappedCollectionSize != 0) {
-  logger.info("Capping report collection at", opts.cappedCollectionSize)
-  reportOptions['capped'] = opts.cappedCollectionSize;
+var reportOptions = {};
+if (opts.cappedCollectionSize !== 0) {
+  logger.info('Capping report collection at', opts.cappedCollectionSize);
+  reportOptions.capped = opts.cappedCollectionSize;
 }
-
-// Sanitized Report ->
-// Original Report
 
 var ReportSchema = new Schema({
   project: {type: Schema.Types.ObjectId, ref: 'Project'},
@@ -44,13 +41,13 @@ var ReportSchema = new Schema({
   directive: String,
   name: String,
 
-}, reportOptions)
+}, reportOptions);
 
 // XXX: lrn2index
-ReportSchema.index({ project: 1 }); 
-ReportSchema.index({ csp_report: 1 }); 
-ReportSchema.index({ ts: 1 }); 
-ReportSchema.index({ directive: 1 }); 
+ReportSchema.index({ project: 1 });
+ReportSchema.index({ 'raw': 1 });
+ReportSchema.index({ ts: 1 });
+ReportSchema.index({ directive: 1 });
 
 var Report = mongoose.model('Report', ReportSchema);
 

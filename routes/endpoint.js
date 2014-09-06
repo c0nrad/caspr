@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var router = express.Router();
 var async = require('async');
@@ -15,17 +17,19 @@ router.post('/:endpoint', function(req, res) {
 
   async.auto({
     project: function(next) {
-      Project.findOne({endpoint: endpoint}).exec(next)
+      Project.findOne({endpoint: endpoint}).exec(next);
     },
 
     report: ['project', function(next, results) {
 
       var project = results.project;
-      if (project == undefined)
-        return next("Project doesn't exist.");
+      if (!project) {
+        return next('Project doesn\'t exist.');
+      }
 
-      if (req.body.data == undefined || req.body.data === "")
+      if (!req.body.data) {
         return next('Not a valid report');
+      }
 
       var report = JSON.parse(req.body.data)['csp-report'];
       report = sanitizeReport(report);
@@ -39,11 +43,11 @@ router.post('/:endpoint', function(req, res) {
 
         raw: JSON.stringify(report),
         'csp-report': report,
-        
+
         directive: getDirective(report),
         classification: getType(report),
         name: getName(report),
-      })
+      });
 
       r.save(next);
     }],
@@ -52,25 +56,26 @@ router.post('/:endpoint', function(req, res) {
       var project = results.project;
       var report = results.report[0];
 
-      if (report['csp-report']['original-policy'] !== "")
+      if (report['csp-report']['original-policy'] !== '') {
         project.policy = report['csp-report']['original-policy'];
+      }
 
       project.save(next);
     }]
 
-  }, function(err, results) {
+  }, function(err) {
     if (err) {
       logger.error(err);
       return res.send(err, 400);
     }
 
     res.send('Okay');
-  })
-})
+  });
+});
 
 function getDirective(report) {
   var directive = report['violated-directive'];
-  if (directive !== undefined && directive !== "") {
+  if (directive !== undefined && directive !== '') {
     directive = directive.split(' ')[0];
   }
   return directive;
@@ -79,44 +84,47 @@ function getDirective(report) {
 function getType(report) {
   var directive = getDirective(report);
 
-  // XXX: Better typing. https://blog.matatall.com/
-  if (report['blocked-uri'] === "" || report['blocked-uri'] === "self") {
-    return 'inline-'+directive.split('-')[0]
+  if (report['blocked-uri'] === '' || report['blocked-uri'] === 'self') {
+    return 'inline-'+directive.split('-')[0];
   } else {
-    return "unauthorized-host"
+    return 'unauthorized-host';
   }
 }
 
 function getName(report) {
-  return getDirective(report) + " - " + getType(report) + " - " + report['document-uri'] + " - " + report['blocked-uri'];
+  return getDirective(report) + ' - ' + getType(report) + ' - ' + report['document-uri'] + ' - ' + report['blocked-uri'];
 }
 
 function stripQuery(uri) {
-  if (uri == undefined || uri === "")
-    return uri
+  if (!uri) {
+    return uri;
+  }
+
   var urlObj = url.parse(uri);
-  urlObj.query = ""
-  urlObj.search = ""
-  urlObj.hash = ""
-  return url.format(urlObj)
+  urlObj.query = '';
+  urlObj.search = '';
+  urlObj.hash = '';
+  return url.format(urlObj);
 }
 
 function stripPath(uri) {
-  if (uri == undefined || uri === "")
-    return uri
+  if (!uri) {
+    return uri;
+  }
+
   var urlObj = url.parse(uri);
-  urlObj.query = ""
-  urlObj.search = ""
-  urlObj.hash = ""
-  urlObj.path = ""
-  urlObj.pathname = ""
-  return url.format(urlObj)
+  urlObj.query = '';
+  urlObj.search = '';
+  urlObj.hash = '';
+  urlObj.path = '';
+  urlObj.pathname = '';
+  return url.format(urlObj);
 }
 
 function sanitizeReport(report) {
-  report['document-uri'] = stripQuery(report['document-uri'])
-  report['blocked-uri'] = stripPath(report['blocked-uri'])
-  return report
+  report['document-uri'] = stripQuery(report['document-uri']);
+  report['blocked-uri'] = stripPath(report['blocked-uri']);
+  return report;
 }
 
-module.exports = router
+module.exports = router;
