@@ -145,6 +145,9 @@ router.get('/projects/:hash/stats', function(req, res, next) {
           }
         }
       ]).exec(function(err, groups) {
+        if (!groups) {
+          return next(err, 0);
+        }
         next(err, groups.length);
       });
     }],
