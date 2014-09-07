@@ -141,11 +141,10 @@ router.get('/projects/:hash/stats', function(req, res, next) {
         },
         {
           $group: {
-            _id: '$raw',
-            count: { $sum: 1 }
+            _id: '$raw'
           }
         }
-      ], {allowDiskUse: true}).exec(function(err, groups) {
+      ]).exec(function(err, groups) {
         if (!groups) {
           return next(err, 0);
         }
