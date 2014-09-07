@@ -1,16 +1,22 @@
 # Caspr
 
-Caspr is a Content-Security-Policy report endpoint and aggregator. 
+![Caspr](https://raw.githubusercontent.com/c0nrad/caspr/master/public/img/happy.png)
 
-It contains three parts:
-1. The Content-Security-Report report endpoint for collecing reports
-2. A RESTful API for interacting / downloading reports
-3. A web app for analyzing reports
-
-An example of all three can be seen at:
 https://caspr.io
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/c0nrad/caspr)
+
+Caspr is a Content-Security-Policy report endpoint, aggregator, and analyzer.
+
+It contains three parts:
+- A Content-Security-Report report endpoint for collecting reports
+- [A RESTful API for interacting / downloading reports](https://raw.githubusercontent.com/c0nrad/caspr/master/docs/api.md)
+- [A web app for analyzing reports](http://caspr.io/#/p/e73f40cd722426dd6df4c81fb56285335747fa29728bc72bd07cbcf5c2829d21)
+
+
+## What is Content-Security-Policy?
+
+https://developer.mozilla.org/en-US/docs/Web/Security/CSP/Introducing_Content_Security_Policy
 
 ## Deployment
 
@@ -23,7 +29,7 @@ npm install
 forever bin/www
 ```
 
-## Usage
+## Options
 
 ```
 $> node bin/www --help
@@ -64,7 +70,7 @@ db.runCommand({convertToCapped: 'reports', size: 500000000 })
 ```
 http://docs.mongodb.org/manual/reference/command/convertToCapped/
 
-## Raw reports dump
+## How do I dump all reports?
 
 All reports are stored within MongoDB. So a script such as the following can be used to dump all reports into a json file
 
@@ -79,12 +85,6 @@ while ( cursor.hasNext() ) {
 ```bash
 mongo dump.js > dump.json
 ```
-
-## Future
-
-- Auto Policy Generator
-  - More beginner friendly
-- More flexable API for handling reports
 
 ## Contact
 
