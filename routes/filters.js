@@ -12,13 +12,17 @@ var _ = require('underscore');
 var util = require('./util');
 
 router.post('/projects/:hash/filters', function(req, res, next) {
-  var filter = _.pick(req.query, 'active', 'field', 'expression', 'name');
+  var filter = _.pick(req.body, 'active', 'field', 'expression', 'name');
+
+  console.log('before', req.query, filter);
   filter = _.defaults(filter, {
     active: true,
     field: 'blocked-uri',
     expression: '/^httpz:/',
     name: 'Block the HTTPZ protocol'
   });
+
+  console.log('after', filter);
 
   async.auto({
     project: function(next) {
