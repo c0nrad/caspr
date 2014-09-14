@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module('app', ['ngResource', 'ui.router', 'nvd3', 'angular.filter']);
+var app = angular.module('app', ['ngResource', 'ui.router', 'nvd3']);
 
 
 app.config(function($stateProvider, $urlRouterProvider) {
