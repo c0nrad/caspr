@@ -72,7 +72,7 @@ router.get('/projects/:hash/groups', function(req, res, next) {
       var groups = results.filteredBuckets;
       var count = groups.length;
 
-      if (seriesCount > 0) {
+      if (seriesCount !== -1) {
         count = Math.min(seriesCount, count);
       }
 

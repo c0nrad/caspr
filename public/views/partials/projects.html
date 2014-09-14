@@ -5,13 +5,13 @@
 <a class="btn btn-primary btn-lg" href="/#/p/new"> New Project </a>
 
 <br>
-<br> 
+<br>
 
-<input type="text" ng-model="projectFilter" class="form-control"> 
+<input type="text" ng-model="projectFilter" class="form-control">
 <table class="table">
 	<tr>
 		<th> Project </th>
-		<th> Number of Reports </th> 
+		<th> Number of Reports </th>
 		<th> Date Last Activity </th>
 	</tr>
 	<tr ng-repeat="project in projects | filter : projectFilter" >

@@ -56,7 +56,7 @@ router.post('/:endpoint', function(req, res) {
       var project = results.project;
       var report = results.report[0];
 
-      if (report['csp-report']['original-policy'] !== '') {
+      if (!!report['csp-report']['original-policy']) {
         project.policy = report['csp-report']['original-policy'];
       }
 
@@ -85,7 +85,7 @@ function getType(report) {
   var directive = getDirective(report);
 
   if (report['blocked-uri'] === '' || report['blocked-uri'] === 'self') {
-    return 'inline-'+directive.split('-')[0];
+    return 'inline';
   } else {
     return 'unauthorized-host';
   }

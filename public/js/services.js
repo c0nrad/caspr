@@ -85,9 +85,9 @@ app.service('GraphService', function() {
         "xAxis": {
           "axisLabel": "Time (ms)",
           "showMaxMin": false,
-          tickFormat: function(d) { 
+          tickFormat: function(d) {
             if (range === "hour" || range == "")
-              return moment(d).format('LT') 
+              return moment(d).format('LT')
             if (range == "day")
               return moment(d).format('LT')
             if (range == "week")

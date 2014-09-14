@@ -1,0 +1,28 @@
+
+<!-- <pre> {{groups | stringify }} </pre> -->
+<div ng-repeat="(directive, groupz) in directiveGroups">
+    <h3> Directive: {{directive}} </h3>
+    <table class="table">
+      <tr>
+        <th> Location </th>
+        <th> Count </th>
+        <th> Line Number </th>
+        <th> Column Number </th>
+        <th> Source File </th>
+        <th> Last Seen </th>
+        <th> Details </th>
+      </tr>
+
+      <tr ng-repeat="group in groupz" ng-click="groups[$index].block = !groups[$index].block">
+        <td> {{group['csp-report']['document-uri']}}
+        <td> {{group.count}} </td>
+        <td> {{group['csp-report']['line-number']}}
+        <td> {{group['csp-report']['column-number']}}
+        <td> {{group['csp-report']['source-file']}}
+        <td> {{group.latest | fromNow}} </td>
+        <td> <a class="btn btn-success" href="/#/p/{{project.hash}}/group/{{group.reportId}}"> Details </button> </td>
+      </tr>
+
+    </table>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+
+<strong>Last Seen Policy: </strong>
+<pre>{{project.policy}} </pre>
+
+<strong>Proposed Policy</strong>
+<pre>{{policy}}</pre>
+
+<div ng-repeat="(directive, groupz) in directiveGroups">
+
+    <h3> Directive: {{directive}} </h3>
+    <table class="table">
+      <tr>
+        <th class="col-md-2"> Allow </th>
+        <th class="col-md-2"> Count </th>
+        <th class="col-md-2"> Last Seen </th>
+        <th class="col-md-5"> Origin </th>
+
+        <th class="col-md-1"> Details </th>
+      </tr>
+
+      <tr ng-repeat="group in groupz" ng-click="group.zz = !group.zz; toggleOrigin(group.directive, group['csp-report']['blocked-uri'])">
+        <td> <input type="checkbox" ng-model="group.zz"> </input> </td>
+        <td> {{group.count}} </td>
+        <td> {{group.latest | fromNow}} </td>
+        <td> {{group['csp-report']['blocked-uri'] }} </td>
+
+        <td> <a class="btn btn-success" href="/#/p/{{project.hash}}/group/{{group.reportId}}"> Details </button> </td>
+      </tr>
+
+    </table>
+  </div>
+</div>

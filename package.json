@@ -10,21 +10,22 @@
     "postinstall": "./node_modules/bower/bin/bower install"
   },
   "dependencies": {
-    "express": "~4.2.0",
-    "static-favicon": "~1.0.0",
-    "morgan": "~1.0.0",
-    "cookie-parser": "~1.0.1",
-    "body-parser": "~1.0.0",
-    "debug": "~0.7.4",
-    "jade": "~1.3.0",
-    "mongoose": "*",
-    "ejs": "*",
     "async": "*",
-    "connect": "*",
-    "moment": "*",
-    "winston": "*",
-    "underscore": "*",
+    "body-parser": "~1.0.0",
     "bower": "*",
-    "nomnom": "*"
+    "connect": "*",
+    "cookie-parser": "~1.0.1",
+    "csp-parse": "0.0.0",
+    "debug": "~0.7.4",
+    "ejs": "*",
+    "express": "~4.2.0",
+    "jade": "~1.3.0",
+    "moment": "*",
+    "mongoose": "*",
+    "morgan": "~1.0.0",
+    "nomnom": "*",
+    "static-favicon": "~1.0.0",
+    "underscore": "*",
+    "winston": "*"
   }
 }
