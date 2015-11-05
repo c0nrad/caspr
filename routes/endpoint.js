@@ -82,8 +82,6 @@ function getDirective(report) {
 }
 
 function getType(report) {
-  var directive = getDirective(report);
-
   if (report['blocked-uri'] === '' || report['blocked-uri'] === 'self') {
     return 'inline';
   } else {

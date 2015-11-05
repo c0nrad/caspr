@@ -1,0 +1,41 @@
+{
+  "manifest_version": 2,
+
+  "name": "Caspr",
+
+  "description": "quickly generate policies for CSP",
+  "version": "0.0.1",
+
+  "icons": { "128": "happy.png" },
+
+
+
+  // "web_accessible_resources": [
+  //   "content/injection.js"
+  // ],
+
+  // "content_scripts": [
+  //   {
+  //     "run_at": "document_start",
+  //     "matches": ["<all_urls>"],
+  //     "js": ["content/content.js"]
+  //   }
+  // ],
+
+  "background": {
+    "scripts": ["background/background.js"]
+  },
+
+  // "icons": { "128": "icon.png" },
+
+  "permissions": [
+    "webRequestBlocking",
+    "webRequest",
+    "<all_urls>",
+    "tabs"
+  ],
+
+  "browser_action": {
+    "default_popup": "popup/popup.html"
+  }
+}

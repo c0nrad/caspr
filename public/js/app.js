@@ -2,7 +2,6 @@
 
 var app = angular.module('app', ['ngResource', 'ui.router', 'nvd3']);
 
-
 app.config(function($stateProvider, $urlRouterProvider) {
 
   $urlRouterProvider.otherwise('/');
@@ -153,13 +152,13 @@ app.controller('OverviewController', function($scope, $state, $rootScope, stats,
   $scope.protocol = window.location.protocol;
 
   $scope.deleteReports = function() {
-    Project.clear({hash: project.hash}, function(results) {
+    Project.clear({hash: project.hash}, function() {
       $rootScope.$emit('loadProject');
     });
   };
 
   $scope.deleteProject = function() {
-    Project.delete({hash: project.hash}, function(results) {
+    Project.delete({hash: project.hash}, function() {
       $state.go('projects');
     });
   };
@@ -170,9 +169,9 @@ app.controller('ProjectController', function($scope, $rootScope, $stateParams, p
   $scope.stats = stats;
   $scope.groups = [];
   $scope.filteredGroups = [];
-  $scope.reportCount = 0;
-  $scope.groupCount = 0;
-  $scope.filteredCount = 0;
+  // $scope.reportCount = 0;
+  // $scope.groupCount = 0;
+  // $scope.filteredCount = 0;
 
   $rootScope.$on('loadProject', function() {
     $scope.project = Project.get({hash: $stateParams.hash});

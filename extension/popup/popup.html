@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Caspr</title>
+
+    <link rel="stylesheet" href="static/bootstrap.css">
+    <link rel="stylesheet" href="app.css">
+
+  </head>
+  <body ng-app="app">
+    <div class="container" ng-controller="HomeController">
+      <h2 class="pull-left">Caspr: <small> {{project.origin}} </small> </h2>
+      <button ng-click="reload()" class="btn btn-primary pull-right" style="margin-top: 20px; margin-left: 5px"> Refresh </button>
+      <button ng-click="clear()" class="btn btn-danger pull-right" style="margin-top: 20px; margin-left: 5px"> Reset </button>
+      
+      <span class="clearfix"> </span>
+      <div class="row">
+
+        <div class="col-xs-3">
+          <img src="static/happy.png" class="img-responsive">
+          <div class="well" style="width:100%; height: 150px">
+            <p> Total Reports </p>
+            <p> <strong>{{project.reports.length}}</strong> </p>
+          </div>
+
+        </div>
+
+        <div class="col-xs-9">
+          <textarea ng-change="saveProject()" ng-model="project.policy" class="form-control" style="height: 100px"></textarea>
+
+          <div style="overflow-y: auto; height:450px; width:100%">
+            <div ng-repeat="report in project.reports">
+              <div class="row">
+                <div class="col-xs-9">
+                  <p> {{report['effective-directive']}} </p>
+                  <p class="lead"> {{ report['blocked-uri'] || 'inline' }} </p>
+                  <a ng-click="report.display = !report.display">Details</a>
+                </div>
+                <div class="col-xs-3">
+                  <button ng-click="acceptReport($index)" class="btn btn-primary pull-right"> Allow </button> <br>
+                  <button class="btn btn-warning pull-right"> Ignore </button>
+                </div>
+              </div>
+              <div ng-if="report.display">
+                <pre >{{report | json }}</pre>
+              </div>
+              <hr>
+            </div> 
+          </div>
+       </div>
+      </div>
+    </div>
+
+  <script src="static/angular.js"></script>
+  <script src="static/underscore.js"></script>
+  <script src="app.js"></script>
+  </body>
+</html>
