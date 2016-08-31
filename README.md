@@ -1,4 +1,4 @@
-# Caspr
+# Caspr (not under development)
 
 ![Caspr](https://raw.githubusercontent.com/c0nrad/caspr/master/public/img/happy.png)
 
