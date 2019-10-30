@@ -1,4 +1,6 @@
 # Caspr (not under development)
+## If you are looking for a CSP reporting SaaS tool, one will be coming out at the end of 2019! Check out https://csper.io for updates. Otherwise feel free to use this tool as free on-prem solution.
+
 
 ![Caspr](https://raw.githubusercontent.com/c0nrad/caspr/master/public/img/happy.png)
 
