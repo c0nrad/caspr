@@ -4,7 +4,6 @@
 
 ![Caspr](https://raw.githubusercontent.com/c0nrad/caspr/master/public/img/happy.png)
 
-https://caspr.io
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/c0nrad/caspr)
 
