@@ -1,5 +1,5 @@
 # Caspr (not under development)
-## If you are looking for a CSP reporting tool, please check out https://csper.io . Otherwise feel free to use this tool as free on-prem solution.
+## If you are looking for a CSP reporting tool, please check out https://csper.io .
 
 
 ![Caspr](https://raw.githubusercontent.com/c0nrad/caspr/master/public/img/happy.png)
